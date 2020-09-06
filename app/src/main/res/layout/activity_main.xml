@@ -18,11 +18,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:inputType="textWebEmailAddress"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:hint="Enter Email ID"
         android:padding="10dp"
-        android:gravity="center"
         />
     <EditText
         android:id="@+id/Login_Password"
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:hint="Enter Password"
         android:padding="10dp"
-        android:gravity="center"
+        android:inputType="textPassword"
         android:layout_below="@+id/Login_Email"
         />
         <Button
