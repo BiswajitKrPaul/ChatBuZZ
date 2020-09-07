@@ -1,2 +1,2 @@
 # ChatTestApp
- Chat Testing Application using firebase
+ Chat Application using firebase
