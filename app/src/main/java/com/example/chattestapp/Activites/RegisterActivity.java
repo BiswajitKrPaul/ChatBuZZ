@@ -94,44 +94,35 @@ public class RegisterActivity extends AppCompatActivity {
             user.setLastname(lastname);
             user.setPhoneno(phone);
             user.setUid(mAuth.getUid());
-            uid = mAuth.getUid();
 
-            mDatabase.child(USER_DB).child(phone).addListenerForSingleValueEvent(new ValueEventListener() {
+            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getValue() != null) {
-                        ChatUtils.maketoast(RegisterActivity.this, "Phone Number Already exist");
-                    } else {
-                        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    mDatabase.child(USER_DB).child(phone).setValue(user, new DatabaseReference.CompletionListener() {
-                                        @Override
-                                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                            if (databaseError == null) {
-                                                Intent intent = new Intent(RegisterActivity.this, ChatList.class);
-                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                startActivity(intent);
-                                            } else {
-                                                ChatUtils.maketoast(getApplicationContext(), "Registration Failed due to : " + databaseError.getMessage());
-                                            }
-                                        }
-                                    });
-                                } else {
-                                    ChatUtils.maketoast(getApplicationContext(), "Registration Failed due to : " + task.getException().getMessage());
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        try {
+                            mDatabase.child(USER_DB).child(mAuth.getUid()).setValue(user, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                    if (databaseError == null) {
+                                        Intent intent = new Intent(RegisterActivity.this, ChatList.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(intent);
+                                    } else {
+                                        mAuth.getCurrentUser().delete();
+                                        ChatUtils.maketoast(getApplicationContext(), "Registration Failed due to : " + databaseError.getMessage());
+                                    }
                                 }
-                            }
-                        });
-
+                            });
+                        } catch (Exception e) {
+                            mAuth.getCurrentUser().delete();
+                            ChatUtils.maketoast(getApplicationContext(), "Registration Failed due to : " + e.getMessage());
+                        }
+                    } else {
+                        ChatUtils.maketoast(getApplicationContext(), "Registration Failed due to : " + task.getException().getMessage());
                     }
                 }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    ChatUtils.maketoast(RegisterActivity.this, databaseError.getMessage());
-                }
             });
+
         }
     }
 }
