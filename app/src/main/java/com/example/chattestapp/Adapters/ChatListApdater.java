@@ -1,12 +1,14 @@
 package com.example.chattestapp.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.chattestapp.Activites.ChatScreen;
 import com.example.chattestapp.DataBaseClasses.User;
 import com.example.chattestapp.Listeners.CustomOnClickListener;
 import com.example.chattestapp.R;
@@ -44,6 +46,9 @@ public class ChatListApdater extends RecyclerView.Adapter<ChatListViewHolder> im
     }
 
     public void getPosition(int pos) {
-        ChatUtils.maketoast(context, userlist.get(pos).getFirstname());
+        //ChatUtils.maketoast(context, userlist.get(pos).getFirstname());
+        Intent intent=new Intent(context, ChatScreen.class);
+        intent.putExtra("uid",userlist.get(pos).getUid());
+        context.startActivity(intent);
     }
 }
