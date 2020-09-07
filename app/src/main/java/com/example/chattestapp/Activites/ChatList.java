@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,10 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chattestapp.Adapters.ChatListApdater;
 import com.example.chattestapp.DataBaseClasses.User;
-import com.example.chattestapp.Listeners.RecylerViewClickListener;
 import com.example.chattestapp.R;
 import com.example.chattestapp.Utils.ChatUtils;
-import com.example.chattestapp.ViewHolder.ChatListViewHolder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,18 +44,6 @@ public class ChatList extends AppCompatActivity {
         recyclerView = findViewById(R.id.chatlist_recylerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(ChatList.this));
         LoadData();
-        /*recyclerView.addOnItemTouchListener(new RecylerViewClickListener(ChatList.this, recyclerView, new RecylerViewClickListener.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                ChatListViewHolder chatListViewHolder = new ChatListViewHolder(view);
-                ChatUtils.maketoast(ChatList.this, chatListViewHolder.username.getText().toString());
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));*/
 
     }
 
