@@ -97,6 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         try {
+                            user.setUid(mAuth.getUid());
                             mDatabase.child(USER_DB).child(mAuth.getUid()).setValue(user, new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
