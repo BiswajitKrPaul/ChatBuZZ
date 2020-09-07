@@ -37,6 +37,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Login"
+            android:id="@+id/btn_login"
+            android:onClick="login"
             android:layout_below="@+id/Login_Password"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Click Here To Register"
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:textStyle="bold"
+            android:onClick="Register"
+            android:textSize="18sp"/>
     </RelativeLayout>
 </LinearLayout>
