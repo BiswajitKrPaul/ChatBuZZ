@@ -47,7 +47,7 @@ public class ChatList extends AppCompatActivity {
         recyclerView = findViewById(R.id.chatlist_recylerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(ChatList.this));
         LoadData();
-        recyclerView.addOnItemTouchListener(new RecylerViewClickListener(ChatList.this, recyclerView, new RecylerViewClickListener.ClickListener() {
+        /*recyclerView.addOnItemTouchListener(new RecylerViewClickListener(ChatList.this, recyclerView, new RecylerViewClickListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 ChatListViewHolder chatListViewHolder = new ChatListViewHolder(view);
@@ -58,7 +58,7 @@ public class ChatList extends AppCompatActivity {
             public void onLongClick(View view, int position) {
 
             }
-        }));
+        }));*/
 
     }
 

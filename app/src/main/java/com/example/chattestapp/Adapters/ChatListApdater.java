@@ -8,12 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chattestapp.DataBaseClasses.User;
+import com.example.chattestapp.Listeners.CustomOnClickListener;
 import com.example.chattestapp.R;
+import com.example.chattestapp.Utils.ChatUtils;
 import com.example.chattestapp.ViewHolder.ChatListViewHolder;
 
 import java.util.ArrayList;
 
-public class ChatListApdater extends RecyclerView.Adapter<ChatListViewHolder> {
+public class ChatListApdater extends RecyclerView.Adapter<ChatListViewHolder> implements CustomOnClickListener {
 
     private Context context;
     private ArrayList<User> userlist;
@@ -27,7 +29,7 @@ public class ChatListApdater extends RecyclerView.Adapter<ChatListViewHolder> {
     @NonNull
     @Override
     public ChatListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ChatListViewHolder(LayoutInflater.from(context).inflate(R.layout.chatlist_cardview, parent, false));
+        return new ChatListViewHolder(LayoutInflater.from(context).inflate(R.layout.chatlist_cardview, parent, false), this);
     }
 
     @Override
@@ -39,5 +41,9 @@ public class ChatListApdater extends RecyclerView.Adapter<ChatListViewHolder> {
     @Override
     public int getItemCount() {
         return userlist.size();
+    }
+
+    public void getPosition(int pos) {
+        ChatUtils.maketoast(context, userlist.get(pos).getFirstname());
     }
 }
