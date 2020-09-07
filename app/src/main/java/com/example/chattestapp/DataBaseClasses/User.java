@@ -7,18 +7,18 @@ public class User {
     private String middlename;
     private String lastname;
     private String phoneno;
-    private String password;
+    private String uid;
 
     public User() {
     }
 
-    public User(String email, String firstname, String middlename, String lastname, String phoneno, String password) {
+    public User(String email, String firstname, String middlename, String lastname, String phoneno, String uid) {
         this.email = email;
         this.firstname = firstname;
         this.middlename = middlename;
         this.lastname = lastname;
         this.phoneno = phoneno;
-        this.password = password;
+        this.uid = uid;
     }
 
     public String getEmail() {
@@ -61,11 +61,11 @@ public class User {
         this.phoneno = phoneno;
     }
 
-    public String getPassword() {
-        return password;
+    public String getUid() {
+        return uid;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }
