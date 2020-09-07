@@ -1,20 +1,42 @@
 package com.example.chattestapp.Activites;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.chattestapp.Adapters.ChatListApdater;
+import com.example.chattestapp.DataBaseClasses.User;
+import com.example.chattestapp.Listeners.RecylerViewClickListener;
 import com.example.chattestapp.R;
 import com.example.chattestapp.Utils.ChatUtils;
+import com.example.chattestapp.ViewHolder.ChatListViewHolder;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class ChatList extends AppCompatActivity {
 
+    static String USER_DB = "users";
+    static String TAG = "ChatList";
     FirebaseAuth mAuth;
+    RecyclerView recyclerView;
+    ChatListApdater chatListApdater;
+    ArrayList<User> userList = new ArrayList<>();
+    DatabaseReference mDatabase;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +44,46 @@ public class ChatList extends AppCompatActivity {
         setContentView(R.layout.activity_chat_list);
         mAuth = FirebaseAuth.getInstance();
         ChatUtils.maketoast(ChatList.this, "Welcome back : " + mAuth.getCurrentUser().getEmail());
+        recyclerView = findViewById(R.id.chatlist_recylerview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(ChatList.this));
+        LoadData();
+        recyclerView.addOnItemTouchListener(new RecylerViewClickListener(ChatList.this, recyclerView, new RecylerViewClickListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                ChatListViewHolder chatListViewHolder = new ChatListViewHolder(view);
+                ChatUtils.maketoast(ChatList.this, chatListViewHolder.username.getText().toString());
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+
+    }
+
+
+    private void LoadData() {
+        mDatabase = FirebaseDatabase.getInstance().getReference().child(USER_DB);
+        userList = new ArrayList<User>();
+
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    user = ds.getValue(User.class);
+                    if (!user.getUid().equalsIgnoreCase(mAuth.getUid()))
+                        userList.add(user);
+                }
+                chatListApdater = new ChatListApdater(ChatList.this, userList);
+                recyclerView.setAdapter(chatListApdater);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, databaseError.getMessage());
+            }
+        });
     }
 
     @Override
