@@ -1,14 +1,15 @@
 package com.example.chattestapp.Activites;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.chattestapp.DataBaseClasses.User;
 import com.example.chattestapp.R;
@@ -17,21 +18,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    private static String USER_DB = "users";
+    private static String TAG = "RegisterActivity";
     EditText et_first_name, et_middle_name, et_last_name, et_email, et_password, et_phone;
     String firstname, middlename, lastname, email, phone, uid, password;
     FirebaseAuth mAuth;
     DatabaseReference mDatabase;
-    private static String USER_DB = "users";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,20 +107,22 @@ public class RegisterActivity extends AppCompatActivity {
                                         startActivity(intent);
                                     } else {
                                         mAuth.getCurrentUser().delete();
+                                        Log.e(TAG, databaseError.getMessage());
                                         ChatUtils.maketoast(getApplicationContext(), "Registration Failed due to : " + databaseError.getMessage());
                                     }
                                 }
                             });
                         } catch (Exception e) {
                             mAuth.getCurrentUser().delete();
+                            Log.e(TAG,e.getMessage());
                             ChatUtils.maketoast(getApplicationContext(), "Registration Failed due to : " + e.getMessage());
                         }
                     } else {
+                        Log.e(TAG,task.getException().getMessage());
                         ChatUtils.maketoast(getApplicationContext(), "Registration Failed due to : " + task.getException().getMessage());
                     }
                 }
             });
-
         }
     }
 }
