@@ -27,7 +27,7 @@ public class RegisterActivity extends AppCompatActivity {
     private static String USER_DB = "users";
     private static String TAG = "RegisterActivity";
     EditText et_first_name, et_middle_name, et_last_name, et_email, et_password, et_phone;
-    String firstname, middlename, lastname, email, phone, uid, password;
+    String firstname, middlename, lastname, email, phone, password;
     FirebaseAuth mAuth;
     DatabaseReference mDatabase;
 
@@ -91,7 +91,6 @@ public class RegisterActivity extends AppCompatActivity {
             user.setMiddlename(middlename);
             user.setLastname(lastname);
             user.setPhoneno(phone);
-            user.setUid(mAuth.getUid());
 
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
