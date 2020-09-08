@@ -25,4 +25,5 @@ public class ChatListViewHolder extends RecyclerView.ViewHolder {
             }
         });
     }
+
 }

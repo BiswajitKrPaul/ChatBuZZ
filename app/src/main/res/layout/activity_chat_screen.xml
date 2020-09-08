@@ -20,6 +20,7 @@
             android:id="@+id/chatscreen_recylerview"
             android:layout_width="match_parent"
             android:background="@color/grey"
+            tools:listitem="@layout/chatscreen_cardview"
             android:layout_height="match_parent" />
     </LinearLayout>
 
@@ -33,7 +34,7 @@
 
 
         <EditText
-            android:id="@+id/editTextTextPersonName"
+            android:id="@+id/chatscreen_messagebody"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="4"
@@ -42,11 +43,12 @@
             android:inputType="text" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/chatscreen_send"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Send" />
+            android:text="@string/send"
+            android:onClick="Send"/>
 
     </LinearLayout>
 

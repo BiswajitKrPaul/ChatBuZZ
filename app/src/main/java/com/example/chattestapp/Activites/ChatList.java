@@ -31,7 +31,7 @@ public class ChatList extends AppCompatActivity {
     FirebaseAuth mAuth;
     RecyclerView recyclerView;
     ChatListApdater chatListApdater;
-    ArrayList<User> userList = new ArrayList<>();
+    ArrayList<User> userList;
     DatabaseReference mDatabase;
     User user;
 
@@ -47,14 +47,24 @@ public class ChatList extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        LoadData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LoadData();
+    }
 
     private void LoadData() {
         mDatabase = FirebaseDatabase.getInstance().getReference().child(USER_DB);
-        userList = new ArrayList<User>();
-
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userList = new ArrayList<User>();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     user = ds.getValue(User.class);
                     if (!user.getUid().equalsIgnoreCase(mAuth.getUid()))
