@@ -35,6 +35,8 @@ public class ChatScreenAdapter extends RecyclerView.Adapter<ChatScreenViewHolder
     @Override
     public void onBindViewHolder(@NonNull ChatScreenViewHolder holder, int position) {
         Chat chat = chatList.get(position);
+        holder.recieverText.setVisibility(View.VISIBLE);
+        holder.sendertext.setVisibility(View.VISIBLE);
         if (senderUid.equals(chat.getSenderUid())) {
             holder.sendertext.setText(chat.getMessageBody());
             holder.recieverText.setVisibility(View.INVISIBLE);
