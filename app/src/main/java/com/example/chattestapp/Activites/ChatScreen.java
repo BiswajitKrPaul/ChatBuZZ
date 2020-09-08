@@ -80,6 +80,7 @@ public class ChatScreen extends AppCompatActivity {
 
     public void Send(View view) {
         String message = et_textBody.getText().toString();
+        et_textBody.setText("");
         if (TextUtils.isEmpty(message)) {
             ChatUtils.maketoast(ChatScreen.this, "Please type message body");
         } else {
@@ -94,7 +95,6 @@ public class ChatScreen extends AppCompatActivity {
                             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                 Log.i(TAG, "Completed posting text");
                                 ChatUtils.maketoast(ChatScreen.this, "Message Sent");
-                                et_textBody.setText("");
                             }
                         });
                     }
