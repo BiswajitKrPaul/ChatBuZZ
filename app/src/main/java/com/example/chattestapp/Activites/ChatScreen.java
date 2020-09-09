@@ -17,6 +17,7 @@ import com.example.chattestapp.DataBaseClasses.Chat;
 import com.example.chattestapp.R;
 import com.example.chattestapp.Utils.ChatUtils;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,22 +51,33 @@ public class ChatScreen extends AppCompatActivity {
         recyclerView = findViewById(R.id.chatscreen_recylerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(ChatScreen.this));
         chat = new Chat();
+        chatScreenAdapter = new ChatScreenAdapter(ChatScreen.this, senderUid);
+        recyclerView.setAdapter(chatScreenAdapter);
         LoadData();
     }
 
     private void LoadData() {
 
-        mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).addValueEventListener(new ValueEventListener() {
+
+        mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                chats = new ArrayList<>();
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    tempChat = ds.getValue(Chat.class);
-                    chats.add(tempChat);
-                }
-                chatScreenAdapter = new ChatScreenAdapter(ChatScreen.this, chats, senderUid);
-                recyclerView.setAdapter(chatScreenAdapter);
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                chatScreenAdapter.updateMessageList(dataSnapshot.getValue(Chat.class));
                 recyclerView.smoothScrollToPosition(recyclerView.getAdapter().getItemCount());
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
             }
 
@@ -74,6 +86,26 @@ public class ChatScreen extends AppCompatActivity {
 
             }
         });
+
+
+       /* mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                chats = new ArrayList<>();
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    tempChat = ds.getValue(Chat.class);
+                    chats.add(tempChat);
+                }
+                chatScreenAdapter.notifyDataSetChanged();
+                recyclerView.smoothScrollToPosition(recyclerView.getAdapter().getItemCount());
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });*/
 
 
     }

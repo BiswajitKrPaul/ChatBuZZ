@@ -17,13 +17,19 @@ import java.util.ArrayList;
 public class ChatScreenAdapter extends RecyclerView.Adapter<ChatScreenViewHolder> {
 
     Context context;
-    private ArrayList<Chat> chatList;
+    private ArrayList<Chat> chatList = new ArrayList<>();
     private String senderUid;
 
-    public ChatScreenAdapter(Context context, ArrayList<Chat> chatList, String senderUid) {
+    public ChatScreenAdapter(Context context, String senderUid) {
         this.context = context;
-        this.chatList = chatList;
         this.senderUid = senderUid;
+    }
+
+    public void updateMessageList(Chat chat) {
+
+        chatList.add(chat);
+
+        notifyItemInserted(chatList.size() - 1);
     }
 
     @NonNull

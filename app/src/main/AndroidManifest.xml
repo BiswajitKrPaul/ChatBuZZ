@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.chattestapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,7 +16,8 @@
         <activity android:name=".Activites.ChatScreen"></activity>
         <activity android:name=".Activites.ChatList" />
         <activity android:name=".Activites.RegisterActivity" />
-        <activity android:name=".Activites.MainActivity"
+        <activity
+            android:name=".Activites.MainActivity"
             android:windowSoftInputMode="adjustPan|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
