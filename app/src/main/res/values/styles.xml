@@ -1,10 +1,18 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>  // For Tool Bar Colouring
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>   // For Status Bar Colouring
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:navigationBarColor">@color/colorPrimary</item> // Use Primary Colour Only
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="popupTheme">@style/PopupTheme</item>
+    </style>
+
+    <style name="PopupTheme" parent="Theme.AppCompat.Light">   // For Menu
+        <item name="android:background">@color/colorBackgroud</item>
+        <item name="android:textColor">@color/textColor</item>
     </style>
 
 </resources>

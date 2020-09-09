@@ -26,9 +26,7 @@ public class ChatScreenAdapter extends RecyclerView.Adapter<ChatScreenViewHolder
     }
 
     public void updateMessageList(Chat chat) {
-
         chatList.add(chat);
-
         notifyItemInserted(chatList.size() - 1);
     }
 

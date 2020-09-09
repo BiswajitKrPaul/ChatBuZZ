@@ -6,9 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".Activites.ChatList">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/chatlist_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/chatscreen_toolbar"
+            style="@style/Widget.MaterialComponents.ActionBar.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:menu="@menu/main_menu"
+            app:title="@string/app_name"
+            app:titleTextColor="@color/white" />
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chatlist_recylerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/chatlist_recylerview"
-        tools:listitem="@layout/chatlist_cardview"/>
+        android:layout_below="@+id/chatlist_appbar"
+        tools:listitem="@layout/chatlist_cardview" />
 </RelativeLayout>

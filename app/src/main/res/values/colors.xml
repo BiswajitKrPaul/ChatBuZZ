@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    // For ToolBar use 500 or 600 density
+    <color name="colorPrimaryDark">#7B1FA2</color>
+    // For Status bar use 700 or 800
+    <color name="colorAccent">#D81B60</color>
+    <color name="colorBackgroud">#9C27B0</color>
+    // For Menu
+    <color name="textColor">#FFFFFF</color>
+    // For Menu Text
     <color name="white">#FFFFFF</color>
     <color name="green">#6EE68C</color>
     <color name="grey">#EFF4EE</color>
+    <color name="colorPrimary">#9C27B0</color>
 </resources>

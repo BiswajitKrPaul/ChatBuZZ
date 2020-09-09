@@ -1,54 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activites.MainActivity"
-    android:padding="18dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".Activites.MainActivity">
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/tr2"
         android:padding="10dp">
-    <EditText
-        android:id="@+id/Login_Email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:inputType="textWebEmailAddress"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:hint="Enter Email ID"
-        android:padding="10dp"
-        />
-    <EditText
-        android:id="@+id/Login_Password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter Password"
-        android:padding="10dp"
-        android:inputType="textPassword"
-        android:layout_below="@+id/Login_Email"
-        />
-        <Button
+
+        <EditText
+            android:id="@+id/Login_Email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Login"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_horizontal"
+            android:hint="Enter Email ID"
+            android:inputType="textWebEmailAddress"
+            android:padding="10dp" />
+
+        <EditText
+            android:id="@+id/Login_Password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Login_Email"
+            android:hint="Enter Password"
+            android:inputType="textPassword"
+            android:padding="10dp" />
+
+        <Button
             android:id="@+id/btn_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Login_Password"
             android:onClick="login"
-            android:layout_below="@+id/Login_Password"/>
+            android:text="Login" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Click Here To Register"
-            android:gravity="center"
             android:layout_alignParentBottom="true"
-            android:textStyle="bold"
+            android:gravity="center"
             android:onClick="Register"
-            android:textSize="18sp"/>
+            android:text="Click Here To Register"
+            android:textSize="18sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 </LinearLayout>
