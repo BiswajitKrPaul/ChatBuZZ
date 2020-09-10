@@ -12,7 +12,6 @@ import com.example.chattestapp.Activites.ChatScreen;
 import com.example.chattestapp.DataBaseClasses.User;
 import com.example.chattestapp.Listeners.CustomOnClickListener;
 import com.example.chattestapp.R;
-import com.example.chattestapp.Utils.ChatUtils;
 import com.example.chattestapp.ViewHolder.ChatListViewHolder;
 
 import java.util.ArrayList;

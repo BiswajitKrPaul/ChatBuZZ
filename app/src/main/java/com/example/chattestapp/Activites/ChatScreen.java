@@ -34,7 +34,6 @@ public class ChatScreen extends AppCompatActivity {
 
     static String MESSAGE_DB = "chat";
     static String TAG = "ChatScreen";
-    static int LIMIT_TO_LAST = 15;
     String recieverUid, senderUid;
     FirebaseAuth mAuth;
     DatabaseReference mDatabase;
@@ -44,10 +43,7 @@ public class ChatScreen extends AppCompatActivity {
     ChatScreenAdapter chatScreenAdapter;
     RecyclerView recyclerView;
     MaterialToolbar materialToolbar;
-    int currentpage = 1;
-    SwipeRefreshLayout swipeRefreshLayout;
-    String lastKey, lastPrevKey;
-    int itemPos = 0, currentpos;
+    private LinearLayoutManager linearLayoutManage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,64 +55,16 @@ public class ChatScreen extends AppCompatActivity {
         materialToolbar = findViewById(R.id.chatscreen_toolbar);
         senderUid = mAuth.getUid();
         et_textBody = findViewById(R.id.chatscreen_messagebody);
-        swipeRefreshLayout = findViewById(R.id.chatscreen_swiperefresh);
         chatScreenAdapter = new ChatScreenAdapter(ChatScreen.this, senderUid, chats);
         recyclerView = findViewById(R.id.chatscreen_recylerview);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(ChatScreen.this));
+        linearLayoutManage = new LinearLayoutManager(ChatScreen.this);
+        recyclerView.setLayoutManager(linearLayoutManage);
         chat = new Chat();
         recyclerView.setAdapter(chatScreenAdapter);
+        chats.clear();
         LoadData();
         OnClickToolBar();
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                currentpage++;
-                itemPos = 0;
-                LoadMoreData();
-            }
-        });
-    }
-
-    private void LoadMoreData() {
-        mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).orderByKey().endAt(lastKey).limitToLast(LIMIT_TO_LAST).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if (!lastPrevKey.equals(dataSnapshot.getKey())) {
-                    chats.add(itemPos++, dataSnapshot.getValue(Chat.class));
-                } else {
-                    lastPrevKey = lastKey;
-                }
-                if (itemPos == 1) {
-                    lastKey = dataSnapshot.getKey();
-                    currentpos = chats.indexOf(dataSnapshot.getKey());
-                }
-                chatScreenAdapter.notifyDataSetChanged();
-                //chatScreenAdapter.notifyItemInserted(chats.size()-1);
-                recyclerView.scrollToPosition(chats.size() - 1);
-                swipeRefreshLayout.setRefreshing(false);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
 
     private void OnClickToolBar() {
@@ -141,19 +89,13 @@ public class ChatScreen extends AppCompatActivity {
     }
 
     private void LoadData() {
-
-        mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).limitToLast(currentpage * LIMIT_TO_LAST).addChildEventListener(new ChildEventListener() {
+        chats.clear();
+        mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                itemPos++;
                 chats.add(dataSnapshot.getValue(Chat.class));
-                if (itemPos == 1) {
-                    lastKey = dataSnapshot.getKey();
-                    lastPrevKey = dataSnapshot.getKey();
-                }
                 chatScreenAdapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(chats.size() - 1);
-                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override

@@ -17,10 +17,10 @@
             android:name=".Activites.RegisterActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".Activites.ChatScreen"
+            android:name=".Activites.MainActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".Activites.MainActivity"
+            android:name=".Activites.ChatScreen"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Activites.ChatList"
