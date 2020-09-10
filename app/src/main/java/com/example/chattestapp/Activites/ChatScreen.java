@@ -1,14 +1,17 @@
 package com.example.chattestapp.Activites;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,13 +19,13 @@ import com.example.chattestapp.Adapters.ChatScreenAdapter;
 import com.example.chattestapp.DataBaseClasses.Chat;
 import com.example.chattestapp.R;
 import com.example.chattestapp.Utils.ChatUtils;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -38,6 +41,7 @@ public class ChatScreen extends AppCompatActivity {
     ArrayList<Chat> chats;
     ChatScreenAdapter chatScreenAdapter;
     RecyclerView recyclerView;
+    MaterialToolbar materialToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,7 @@ public class ChatScreen extends AppCompatActivity {
         recieverUid = getIntent().getStringExtra("uid");
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        materialToolbar = findViewById(R.id.chatscreen_toolbar);
         senderUid = mAuth.getUid();
         et_textBody = findViewById(R.id.chatscreen_messagebody);
         recyclerView = findViewById(R.id.chatscreen_recylerview);
@@ -54,6 +59,28 @@ public class ChatScreen extends AppCompatActivity {
         chatScreenAdapter = new ChatScreenAdapter(ChatScreen.this, senderUid);
         recyclerView.setAdapter(chatScreenAdapter);
         LoadData();
+        OnClickToolBar();
+    }
+
+    private void OnClickToolBar() {
+
+        materialToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.chatlist_logout:
+                        mAuth.signOut();
+                        Intent intent = new Intent(ChatScreen.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        return true;
+                    default:
+                        return true;
+                }
+            }
+        });
+
+
     }
 
     private void LoadData() {

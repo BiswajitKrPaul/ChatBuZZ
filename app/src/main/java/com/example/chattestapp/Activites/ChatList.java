@@ -18,6 +18,7 @@ import com.example.chattestapp.R;
 import com.example.chattestapp.Utils.ChatUtils;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,14 +38,23 @@ public class ChatList extends AppCompatActivity {
     DatabaseReference mDatabase;
     User user;
     MaterialToolbar mToolBar;
+    FirebaseUser firebaseUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_list);
         mToolBar = findViewById(R.id.chatscreen_toolbar);
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         mAuth = FirebaseAuth.getInstance();
-        ChatUtils.maketoast(ChatList.this, "Welcome back : " + mAuth.getCurrentUser().getEmail());
+        if (firebaseUser == null) {
+            Intent intent = new Intent(ChatList.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else {
+            ChatUtils.maketoast(ChatList.this, "Welcome back : " + mAuth.getCurrentUser().getEmail());
+        }
         recyclerView = findViewById(R.id.chatlist_recylerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(ChatList.this));
         LoadData();
@@ -60,7 +70,7 @@ public class ChatList extends AppCompatActivity {
                     case R.id.chatlist_logout:
                         mAuth.signOut();
                         Intent intent = new Intent(ChatList.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         return true;
                     default:

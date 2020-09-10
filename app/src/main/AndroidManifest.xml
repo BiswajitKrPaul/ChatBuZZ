@@ -13,12 +13,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
-        <activity android:name=".Activites.ChatScreen"></activity>
-        <activity android:name=".Activites.ChatList" />
-        <activity android:name=".Activites.RegisterActivity" />
+        <activity
+            android:name=".Activites.RegisterActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".Activites.ChatScreen"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Activites.MainActivity"
-            android:windowSoftInputMode="adjustPan|adjustResize">
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".Activites.ChatList"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -43,7 +43,7 @@ public class ChatScreenAdapter extends RecyclerView.Adapter<ChatScreenViewHolder
         holder.sendertext.setVisibility(View.VISIBLE);
         if (senderUid.equals(chat.getSenderUid())) {
             holder.sendertext.setText(chat.getMessageBody());
-            holder.recieverText.setVisibility(View.INVISIBLE);
+            holder.recieverText.setVisibility(View.GONE);
         } else {
             holder.sendertext.setVisibility(View.GONE);
             holder.recieverText.setText(chat.getMessageBody());

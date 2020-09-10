@@ -41,7 +41,7 @@
         <RelativeLayout
             android:id="@+id/chatscreen_liner2"
             android:layout_width="match_parent"
-            android:layout_height="00dp"
+            android:layout_height="0dp"
             android:layout_below="@+id/chatscreen_recylerview"
             android:layout_alignParentBottom="true"
             android:layout_weight="1">
@@ -49,11 +49,15 @@
             <EditText
                 android:id="@+id/chatscreen_messagebody"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_toStartOf="@+id/chatscreen_send"
                 android:ems="10"
-                android:hint="Type your message"
-                android:inputType="text" />
+                android:hint="Type your message here"
+                android:inputType="textMultiLine"
+                android:lines="8"
+                android:maxLines="10"
+                android:maxLength="500"
+                android:scrollbars="vertical" />
 
             <Button
                 android:id="@+id/chatscreen_send"
