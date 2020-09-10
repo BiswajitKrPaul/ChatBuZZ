@@ -28,15 +28,19 @@
         android:orientation="vertical"
         android:weightSum="10">
 
-
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="wrap_content"
+            android:id="@+id/chatscreen_swiperefresh"
+            android:layout_weight="9"
+            android:layout_height="0dp">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chatscreen_recylerview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_below="@+id/chatlist_appbar"
-            android:layout_weight="9"
             android:background="@color/grey"
             tools:listitem="@layout/chatscreen_cardview" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <RelativeLayout
             android:id="@+id/chatscreen_liner2"
