@@ -52,7 +52,7 @@ public class ChatList extends AppCompatActivity {
             Intent intent = new Intent(ChatList.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-        }else {
+        } else {
             ChatUtils.maketoast(ChatList.this, "Welcome back : " + mAuth.getCurrentUser().getEmail());
         }
         recyclerView = findViewById(R.id.chatlist_recylerview);
@@ -119,5 +119,4 @@ public class ChatList extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
-
 }

@@ -38,7 +38,7 @@ public class ChatScreen extends AppCompatActivity {
     DatabaseReference mDatabase;
     EditText et_textBody;
     Chat chat, tempChat;
-    ArrayList<Chat> chats;
+    ArrayList<Chat> chats = new ArrayList<>();
     ChatScreenAdapter chatScreenAdapter;
     RecyclerView recyclerView;
     MaterialToolbar materialToolbar;
@@ -53,10 +53,11 @@ public class ChatScreen extends AppCompatActivity {
         materialToolbar = findViewById(R.id.chatscreen_toolbar);
         senderUid = mAuth.getUid();
         et_textBody = findViewById(R.id.chatscreen_messagebody);
+        chatScreenAdapter = new ChatScreenAdapter(ChatScreen.this, senderUid, chats);
         recyclerView = findViewById(R.id.chatscreen_recylerview);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(ChatScreen.this));
         chat = new Chat();
-        chatScreenAdapter = new ChatScreenAdapter(ChatScreen.this, senderUid);
         recyclerView.setAdapter(chatScreenAdapter);
         LoadData();
         OnClickToolBar();
@@ -89,8 +90,9 @@ public class ChatScreen extends AppCompatActivity {
         mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                chatScreenAdapter.updateMessageList(dataSnapshot.getValue(Chat.class));
-                recyclerView.smoothScrollToPosition(recyclerView.getAdapter().getItemCount());
+                chats.add(dataSnapshot.getValue(Chat.class));
+                chatScreenAdapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(chats.size() - 1);
             }
 
             @Override
@@ -114,27 +116,6 @@ public class ChatScreen extends AppCompatActivity {
             }
         });
 
-
-       /* mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                chats = new ArrayList<>();
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    tempChat = ds.getValue(Chat.class);
-                    chats.add(tempChat);
-                }
-                chatScreenAdapter.notifyDataSetChanged();
-                recyclerView.smoothScrollToPosition(recyclerView.getAdapter().getItemCount());
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
-
-
     }
 
     public void Send(View view) {
@@ -153,7 +134,7 @@ public class ChatScreen extends AppCompatActivity {
                             @Override
                             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                 Log.i(TAG, "Completed posting text");
-                                ChatUtils.maketoast(ChatScreen.this, "Message Sent");
+                                //ChatUtils.maketoast(ChatScreen.this, "Message Sent");
                             }
                         });
                     }
