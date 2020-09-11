@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.chattestapp.Adapters.ChatScreenAdapter;
 import com.example.chattestapp.DataBaseClasses.Chat;
@@ -33,15 +34,21 @@ public class ChatScreen extends AppCompatActivity {
 
     static String MESSAGE_DB = "chat";
     static String TAG = "ChatScreen";
-    String recieverUid, senderUid;
+    static int LIMIT_LAST_DEFAULT = 25;
+    static int LIMIT_LAST_LOAD_MORE = 15;
+    private static int firstVisibleInListview;
+    String recieverUid, senderUid, lastkey, prevlastkey, firstKey = "";
     FirebaseAuth mAuth;
     DatabaseReference mDatabase;
     EditText et_textBody;
-    Chat chat, tempChat;
+    Boolean isSwipeAble = true;
+    Chat chat;
     ArrayList<Chat> chats = new ArrayList<>();
     ChatScreenAdapter chatScreenAdapter;
     RecyclerView recyclerView;
     MaterialToolbar materialToolbar;
+    SwipeRefreshLayout swipeRefreshLayout;
+    int currentsize, previoussize, itemPos = 0, currentpage = 1, counter = 0;
     private LinearLayoutManager linearLayoutManage;
 
     @Override
@@ -53,6 +60,7 @@ public class ChatScreen extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         materialToolbar = findViewById(R.id.chatscreen_toolbar);
         senderUid = mAuth.getUid();
+        swipeRefreshLayout = findViewById(R.id.swipe);
         et_textBody = findViewById(R.id.chatscreen_messagebody);
         chatScreenAdapter = new ChatScreenAdapter(ChatScreen.this, senderUid, chats);
         recyclerView = findViewById(R.id.chatscreen_recylerview);
@@ -63,7 +71,60 @@ public class ChatScreen extends AppCompatActivity {
         recyclerView.setAdapter(chatScreenAdapter);
         chats.clear();
         LoadData();
+        firstDataKey();
+        firstVisibleInListview = linearLayoutManage.findFirstVisibleItemPosition();
         OnClickToolBar();
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (isSwipeAble) {
+                    LoadMoreData();
+                }
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+    }
+
+    private void LoadMoreData() {
+        itemPos = 0;
+        mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).orderByKey().endAt(lastkey).limitToLast(LIMIT_LAST_LOAD_MORE).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (!prevlastkey.equals(dataSnapshot.getKey())) {
+                    chats.add(itemPos++, dataSnapshot.getValue(Chat.class));
+                } else {
+                    prevlastkey = lastkey;
+                }
+                if (itemPos == 1) {
+                    lastkey = dataSnapshot.getKey();
+                }
+                if (firstKey.equals(lastkey)) {
+                    isSwipeAble = false;
+                }
+                chatScreenAdapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void OnClickToolBar() {
@@ -83,18 +144,22 @@ public class ChatScreen extends AppCompatActivity {
                 }
             }
         });
-
-
     }
 
     private void LoadData() {
         chats.clear();
-        mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).addChildEventListener(new ChildEventListener() {
+        mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).limitToLast(LIMIT_LAST_DEFAULT).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 chats.add(dataSnapshot.getValue(Chat.class));
+                itemPos++;
+                if (itemPos == 1) {
+                    lastkey = dataSnapshot.getKey();
+                    prevlastkey = dataSnapshot.getKey();
+                }
                 chatScreenAdapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(chats.size() - 1);
+                isSwipeAble = !firstKey.equals(lastkey);
             }
 
             @Override
@@ -144,4 +209,35 @@ public class ChatScreen extends AppCompatActivity {
             });
         }
     }
+
+    public void firstDataKey() {
+        mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).orderByKey().limitToFirst(1).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                firstKey = dataSnapshot.getKey();
+                System.out.println("Key " + firstKey + "Message  " + dataSnapshot.getValue(Chat.class).getMessageBody());
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 }
