@@ -1,35 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:weightSum="2"
-    android:padding="3dp">
+    android:background="@color/white"
+    android:checkable="false"
+    android:elevation="1dp"
+    android:focusable="false">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#CFDBF1"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/chatlist_card_name"
             android:layout_width="match_parent"
-            android:text="NO DATA"
-            android:textSize="10sp"
-            android:gravity="center_horizontal"
-            android:textStyle="bold|italic"
+            android:layout_height="30dp"
             android:layout_weight="1"
-            android:layout_height="30dp" />
+            android:gravity="center_horizontal"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/chatlist_card_email"
             android:layout_width="match_parent"
-            android:text="NO DATA"
-            android:textSize="10sp"
-            android:gravity="center_horizontal"
+            android:layout_height="30dp"
             android:layout_weight="1"
-            android:textStyle="bold|italic"
-            android:layout_height="30dp" />
+            android:gravity="center_horizontal"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black" />
     </LinearLayout>
-</LinearLayout>
+
+
+</com.google.android.material.card.MaterialCardView>

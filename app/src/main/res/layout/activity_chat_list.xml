@@ -18,12 +18,18 @@
             android:layout_height="?attr/actionBarSize"
             app:menu="@menu/main_menu"
             app:title="@string/app_name"
+            android:background="@color/colorPrimary"
             app:titleTextColor="@color/white" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/chatlist_tablayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            app:tabTextColor="@color/grainColor"
+            app:tabSelectedTextColor="@color/white"
+            app:tabIndicatorColor="@color/white"
+            app:tabIndicatorHeight="3dp">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"

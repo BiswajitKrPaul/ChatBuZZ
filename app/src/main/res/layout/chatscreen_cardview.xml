@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="3dp"
-            android:background="@color/white"
+            android:background="@drawable/item_round_chat_reciever"
             android:padding="10dp"
             android:text="receiver messages here"
             android:textColor="@android:color/black"
@@ -39,11 +39,11 @@
             android:layout_alignParentTop="@+id/receiver_message_text"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="10dp"
-            android:background="@color/green"
+            android:background="@drawable/item_round_chat_bubble"
             android:padding="10dp"
             android:text="sender messages here"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>
 

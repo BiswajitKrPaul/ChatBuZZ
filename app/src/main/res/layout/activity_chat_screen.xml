@@ -17,6 +17,7 @@
             style="@style/Widget.MaterialComponents.ActionBar.Primary"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
             app:menu="@menu/main_menu"
             app:title="@string/app_name"
             app:titleTextColor="@color/white" />
@@ -26,19 +27,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:padding="2dp"
         android:weightSum="10">
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swiperefresh"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="9"
-            android:id="@+id/swiperefresh">
+            android:layout_weight="9">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/chatscreen_recylerview"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="match_parent"
                 android:layout_below="@+id/chatlist_appbar"
-                android:layout_weight="9"
                 android:background="@color/grey"
                 tools:listitem="@layout/chatscreen_cardview" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
@@ -49,20 +51,25 @@
             android:layout_height="0dp"
             android:layout_below="@+id/chatscreen_recylerview"
             android:layout_alignParentBottom="true"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:background="@color/grey">
 
             <EditText
                 android:id="@+id/chatscreen_messagebody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@+id/chatscreen_send"
+                android:background="@drawable/item_chat_text"
                 android:ems="10"
                 android:hint="Type your message here"
                 android:inputType="textMultiLine"
                 android:lines="8"
                 android:maxLength="500"
                 android:maxLines="10"
-                android:scrollbars="vertical" />
+                android:scrollbars="vertical"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textSize="16sp" />
 
             <Button
                 android:id="@+id/chatscreen_send"
