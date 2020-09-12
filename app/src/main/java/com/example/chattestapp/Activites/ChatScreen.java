@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -15,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.chattestapp.Adapters.ChatScreenAdapter;
 import com.example.chattestapp.DataBaseClasses.Chat;
@@ -46,7 +46,8 @@ public class ChatScreen extends AppCompatActivity {
     ChatScreenAdapter chatScreenAdapter;
     RecyclerView recyclerView;
     MaterialToolbar materialToolbar;
-    int itemPos = 0, itemPos1=0;
+    SwipeRefreshLayout swipeRefreshLayout;
+    int itemPos = 0, itemPos1 = 0;
     private LinearLayoutManager linearLayoutManage;
 
     @Override
@@ -64,29 +65,20 @@ public class ChatScreen extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         linearLayoutManage = new LinearLayoutManager(ChatScreen.this);
         recyclerView.setLayoutManager(linearLayoutManage);
+        swipeRefreshLayout = findViewById(R.id.swiperefresh);
         chat = new Chat();
         recyclerView.setAdapter(chatScreenAdapter);
         chats.clear();
         LoadData();
         firstDataKey();
         OnClickToolBar();
-
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-                    isScrolled = true;
-                }
-            }
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (isSwipeAble && isScrolled) {
+            public void onRefresh() {
+                if (isSwipeAble) {
                     LoadMoreData();
-                    isScrolled = false;
                 }
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
@@ -109,6 +101,7 @@ public class ChatScreen extends AppCompatActivity {
                     if (firstKey.equals(lastkey)) {
                         isSwipeAble = false;
                     }
+                    swipeRefreshLayout.setRefreshing(false);
                 }
 
                 @Override
@@ -161,7 +154,7 @@ public class ChatScreen extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 chats.add(dataSnapshot.getValue(Chat.class));
                 itemPos1++;
-                if ( chats.size()==1) {
+                if (itemPos1 == 1) {
                     lastkey = dataSnapshot.getKey();
                     prevlastkey = dataSnapshot.getKey();
                 }
