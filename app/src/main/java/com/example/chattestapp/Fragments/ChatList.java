@@ -66,7 +66,6 @@ public class ChatList extends Fragment {
 
     }
 
-
     private void LoadData() {
         mDatabase = FirebaseDatabase.getInstance().getReference().child(USER_DB);
         mDatabase.addValueEventListener(new ValueEventListener() {
@@ -77,6 +76,7 @@ public class ChatList extends Fragment {
                     user = ds.getValue(User.class);
                     if (!user.getUid().equalsIgnoreCase(mAuth.getUid()))
                         userList.add(user);
+
                 }
                 chatListApdater = new ChatListApdater(getActivity(), userList);
                 recyclerView.setAdapter(chatListApdater);

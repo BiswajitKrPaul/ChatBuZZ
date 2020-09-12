@@ -216,7 +216,6 @@ public class ChatScreen extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 firstKey = dataSnapshot.getKey();
-                System.out.println("Key " + firstKey + "Message  " + dataSnapshot.getValue(Chat.class).getMessageBody());
             }
 
             @Override
