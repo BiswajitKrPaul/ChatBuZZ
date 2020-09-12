@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -14,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.chattestapp.Adapters.ChatScreenAdapter;
 import com.example.chattestapp.DataBaseClasses.Chat;
@@ -36,19 +36,17 @@ public class ChatScreen extends AppCompatActivity {
     static String TAG = "ChatScreen";
     static int LIMIT_LAST_DEFAULT = 25;
     static int LIMIT_LAST_LOAD_MORE = 15;
-    private static int firstVisibleInListview;
     String recieverUid, senderUid, lastkey, prevlastkey, firstKey = "";
     FirebaseAuth mAuth;
     DatabaseReference mDatabase;
     EditText et_textBody;
-    Boolean isSwipeAble = true;
+    Boolean isSwipeAble = true, isScrolled = false;
     Chat chat;
     ArrayList<Chat> chats = new ArrayList<>();
     ChatScreenAdapter chatScreenAdapter;
     RecyclerView recyclerView;
     MaterialToolbar materialToolbar;
-    SwipeRefreshLayout swipeRefreshLayout;
-    int currentsize, previoussize, itemPos = 0, currentpage = 1, counter = 0;
+    int itemPos = 0, itemPos1=0;
     private LinearLayoutManager linearLayoutManage;
 
     @Override
@@ -60,7 +58,6 @@ public class ChatScreen extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         materialToolbar = findViewById(R.id.chatscreen_toolbar);
         senderUid = mAuth.getUid();
-        swipeRefreshLayout = findViewById(R.id.swipe);
         et_textBody = findViewById(R.id.chatscreen_messagebody);
         chatScreenAdapter = new ChatScreenAdapter(ChatScreen.this, senderUid, chats);
         recyclerView = findViewById(R.id.chatscreen_recylerview);
@@ -72,59 +69,69 @@ public class ChatScreen extends AppCompatActivity {
         chats.clear();
         LoadData();
         firstDataKey();
-        firstVisibleInListview = linearLayoutManage.findFirstVisibleItemPosition();
         OnClickToolBar();
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onRefresh() {
-                if (isSwipeAble) {
-                    LoadMoreData();
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                    isScrolled = true;
                 }
-                swipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (isSwipeAble && isScrolled) {
+                    LoadMoreData();
+                    isScrolled = false;
+                }
             }
         });
     }
 
     private void LoadMoreData() {
         itemPos = 0;
-        mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).orderByKey().endAt(lastkey).limitToLast(LIMIT_LAST_LOAD_MORE).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if (!prevlastkey.equals(dataSnapshot.getKey())) {
-                    chats.add(itemPos++, dataSnapshot.getValue(Chat.class));
-                } else {
-                    prevlastkey = lastkey;
+        if (chatScreenAdapter.getItemCount() > 0) {
+            mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).orderByKey().endAt(lastkey).limitToLast(LIMIT_LAST_LOAD_MORE).addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    if (!prevlastkey.equals(dataSnapshot.getKey())) {
+                        chats.add(itemPos++, dataSnapshot.getValue(Chat.class));
+                        chatScreenAdapter.notifyItemInserted(chats.indexOf(dataSnapshot.getValue(Chat.class)));
+                    } else {
+                        prevlastkey = lastkey;
+                    }
+                    if (itemPos == 1) {
+                        lastkey = dataSnapshot.getKey();
+                    }
+                    if (firstKey.equals(lastkey)) {
+                        isSwipeAble = false;
+                    }
                 }
-                if (itemPos == 1) {
-                    lastkey = dataSnapshot.getKey();
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
                 }
-                if (firstKey.equals(lastkey)) {
-                    isSwipeAble = false;
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
                 }
-                chatScreenAdapter.notifyDataSetChanged();
-                swipeRefreshLayout.setRefreshing(false);
-            }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-            }
+                }
 
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+                }
+            });
+        }
     }
 
     private void OnClickToolBar() {
@@ -148,12 +155,13 @@ public class ChatScreen extends AppCompatActivity {
 
     private void LoadData() {
         chats.clear();
+        chatScreenAdapter.notifyDataSetChanged();
         mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).limitToLast(LIMIT_LAST_DEFAULT).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 chats.add(dataSnapshot.getValue(Chat.class));
-                itemPos++;
-                if (itemPos == 1) {
+                itemPos1++;
+                if ( chats.size()==1) {
                     lastkey = dataSnapshot.getKey();
                     prevlastkey = dataSnapshot.getKey();
                 }
