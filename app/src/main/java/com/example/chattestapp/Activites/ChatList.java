@@ -2,43 +2,35 @@ package com.example.chattestapp.Activites;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.example.chattestapp.Adapters.ChatListApdater;
+import com.example.chattestapp.Adapters.MainViewPagerAdapter;
 import com.example.chattestapp.DataBaseClasses.User;
 import com.example.chattestapp.R;
 import com.example.chattestapp.Utils.ChatUtils;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 public class ChatList extends AppCompatActivity {
 
-    static String USER_DB = "users";
-    static String TAG = "ChatList";
     FirebaseAuth mAuth;
-    RecyclerView recyclerView;
-    ChatListApdater chatListApdater;
-    ArrayList<User> userList;
-    DatabaseReference mDatabase;
-    User user;
+    ViewPager viewPager;
+    MainViewPagerAdapter mainViewPagerAdapter;
     MaterialToolbar mToolBar;
     FirebaseUser firebaseUser;
+    TabLayout tabLayout;
 
 
     @Override
@@ -55,10 +47,13 @@ public class ChatList extends AppCompatActivity {
         } else {
             ChatUtils.maketoast(ChatList.this, "Welcome back : " + mAuth.getCurrentUser().getEmail());
         }
-        recyclerView = findViewById(R.id.chatlist_recylerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(ChatList.this));
-        LoadData();
+        viewPager = findViewById(R.id.chatlist_viewpager);
+        tabLayout = findViewById(R.id.chatlist_tablayout);
+        mainViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        viewPager.setAdapter(mainViewPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
         LoadMenuBar();
+
 
     }
 
@@ -80,7 +75,7 @@ public class ChatList extends AppCompatActivity {
         });
     }
 
-    @Override
+   /* @Override
     protected void onRestart() {
         super.onRestart();
         LoadData();
@@ -112,11 +107,6 @@ public class ChatList extends AppCompatActivity {
                 Log.e(TAG, databaseError.getMessage());
             }
         });
-    }
+    }*/
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
 }
