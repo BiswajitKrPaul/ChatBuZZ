@@ -21,7 +21,7 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Activites.ChatScreen"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activites.ChatList"
             android:windowSoftInputMode="adjustPan">

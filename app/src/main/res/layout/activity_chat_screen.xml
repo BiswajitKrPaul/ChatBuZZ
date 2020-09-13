@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     tools:context=".Activites.ChatScreen">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -23,17 +24,17 @@
             app:titleTextColor="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/chatscreenbackgroud"
         android:orientation="vertical"
-        android:padding="2dp"
         android:weightSum="10">
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swiperefresh"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="9">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -41,46 +42,59 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/chatlist_appbar"
-                android:background="@color/grey"
+                android:background="@android:color/transparent"
                 tools:listitem="@layout/chatscreen_cardview" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <RelativeLayout
-            android:id="@+id/chatscreen_liner2"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_below="@+id/chatscreen_recylerview"
-            android:layout_alignParentBottom="true"
-            android:layout_weight="1"
-            android:background="@color/grey">
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/chatscreen_messagebody"
-                android:layout_width="match_parent"
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@+id/chatscreen_send"
-                android:background="@drawable/item_chat_text"
-                android:ems="10"
-                android:hint="Type your message here"
-                android:inputType="textMultiLine"
-                android:lines="8"
-                android:maxLength="500"
-                android:maxLines="10"
-                android:scrollbars="vertical"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
-                android:textSize="16sp" />
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                app:cardCornerRadius="25dp"
+                app:cardElevation="2dp">
 
-            <Button
-                android:id="@+id/chatscreen_send"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="5dp">
+
+                    <EditText
+                        android:id="@+id/chatscreen_messagebody"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        android:hint="Type a message"
+                        android:padding="8dp" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_send"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_margin="5dp"
+                android:backgroundTint="@color/colorPrimary"
                 android:onClick="Send"
-                android:text="@string/send" />
-
-        </RelativeLayout>
-
+                android:src="@drawable/ic__send_black_24dp"
+                android:visibility="visible"
+                app:tint="@android:color/white" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
