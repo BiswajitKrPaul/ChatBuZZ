@@ -67,6 +67,8 @@ public class ChatScreen extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManage);
         swipeRefreshLayout = findViewById(R.id.swiperefresh);
         chat = new Chat();
+        /*isScrolled = false;
+        isSwipeAble = true;*/
         recyclerView.setAdapter(chatScreenAdapter);
         chats.clear();
         LoadData();
