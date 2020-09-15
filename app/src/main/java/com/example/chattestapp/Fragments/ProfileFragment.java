@@ -60,7 +60,6 @@ public class ProfileFragment extends Fragment {
 
     public void getProfileImageUri(FirebaseUser user) {
 
-
         try {
             mStorage.child(user.getUid() + ".jpg").getBytes(2048 * 2048).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
