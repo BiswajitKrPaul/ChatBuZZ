@@ -19,6 +19,7 @@ public class User {
         this.lastname = lastname;
         this.phoneno = phoneno;
         this.uid=uid;
+
     }
 
     public String getEmail() {
@@ -68,4 +69,5 @@ public class User {
     public void setUid(String uid) {
         this.uid = uid;
     }
+
 }
