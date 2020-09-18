@@ -68,6 +68,7 @@ public class ChatList extends Fragment {
 
     private void LoadData() {
         mDatabase = FirebaseDatabase.getInstance().getReference().child(USER_DB);
+        mDatabase.keepSynced(true);
         mDatabase.orderByChild("firstname").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

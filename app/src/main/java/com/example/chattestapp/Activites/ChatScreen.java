@@ -16,8 +16,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.chattestapp.Adapters.ChatScreenAdapter;
 import com.example.chattestapp.DataBaseClasses.Chat;
+import com.example.chattestapp.DataBaseClasses.User;
 import com.example.chattestapp.R;
 import com.example.chattestapp.Utils.ChatUtils;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -27,12 +30,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatScreen extends AppCompatActivity {
 
     static String MESSAGE_DB = "chat";
+    static String USER_DB = "users";
     static String TAG = "ChatScreen";
     static int LIMIT_LAST_DEFAULT = 25;
     static int LIMIT_LAST_LOAD_MORE = 15;
@@ -40,14 +47,16 @@ public class ChatScreen extends AppCompatActivity {
     FirebaseAuth mAuth;
     DatabaseReference mDatabase;
     EditText et_textBody;
-    Boolean isSwipeAble = true, isScrolled = false;
+    Boolean isSwipeAble = true;
     Chat chat;
     ArrayList<Chat> chats = new ArrayList<>();
     ChatScreenAdapter chatScreenAdapter;
     RecyclerView recyclerView;
     MaterialToolbar materialToolbar;
     SwipeRefreshLayout swipeRefreshLayout;
+    CircleImageView profilepic;
     int itemPos = 0, itemPos1 = 0;
+    User currentUser;
     private LinearLayoutManager linearLayoutManage;
 
     @Override
@@ -57,23 +66,24 @@ public class ChatScreen extends AppCompatActivity {
         recieverUid = getIntent().getStringExtra("uid");
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.keepSynced(true);
         materialToolbar = findViewById(R.id.chatscreen_toolbar);
         senderUid = mAuth.getUid();
+        currentUser = new User();
         et_textBody = findViewById(R.id.chatscreen_messagebody);
-        chatScreenAdapter = new ChatScreenAdapter(ChatScreen.this, senderUid, chats);
+        chatScreenAdapter = new ChatScreenAdapter(ChatScreen.this, senderUid, chats, recieverUid);
         recyclerView = findViewById(R.id.chatscreen_recylerview);
         recyclerView.setHasFixedSize(true);
         linearLayoutManage = new LinearLayoutManager(ChatScreen.this);
+        profilepic = findViewById(R.id.chatscreen_profilepic);
         recyclerView.setLayoutManager(linearLayoutManage);
         swipeRefreshLayout = findViewById(R.id.swiperefresh);
-        chat = new Chat();
-        /*isScrolled = false;
-        isSwipeAble = true;*/
         recyclerView.setAdapter(chatScreenAdapter);
         chats.clear();
         LoadData();
         firstDataKey();
         OnClickToolBar();
+        LoadToolBar();
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -83,6 +93,7 @@ public class ChatScreen extends AppCompatActivity {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+
 
         recyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
@@ -95,6 +106,23 @@ public class ChatScreen extends AppCompatActivity {
                         }
                     }, 100);
                 }
+            }
+        });
+    }
+
+    private void LoadToolBar() {
+
+        mDatabase.child(USER_DB).child(recieverUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                currentUser = dataSnapshot.getValue(User.class);
+                materialToolbar.setTitle(currentUser.getFirstname() + " " + currentUser.getLastname());
+                Glide.with(getApplicationContext()).load(currentUser.getThumbprofilepic()).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.profile).into(profilepic);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }
@@ -208,6 +236,7 @@ public class ChatScreen extends AppCompatActivity {
         if (TextUtils.isEmpty(message)) {
             ChatUtils.maketoast(ChatScreen.this, "Please type message body");
         } else {
+            chat = new Chat();
             chat.setSenderUid(senderUid);
             chat.setMessageBody(message);
             mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).push().setValue(chat, new DatabaseReference.CompletionListener() {
@@ -218,7 +247,7 @@ public class ChatScreen extends AppCompatActivity {
                             @Override
                             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                 Log.i(TAG, "Completed posting text");
-                                //ChatUtils.maketoast(ChatScreen.this, "Message Sent");
+                                // ChatUtils.maketoast(ChatScreen.this, "Message Sent");
                             }
                         });
                     }
@@ -228,25 +257,10 @@ public class ChatScreen extends AppCompatActivity {
     }
 
     public void firstDataKey() {
-        mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).orderByKey().limitToFirst(1).addChildEventListener(new ChildEventListener() {
+        mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).orderByKey().limitToFirst(1).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 firstKey = dataSnapshot.getKey();
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
@@ -255,5 +269,4 @@ public class ChatScreen extends AppCompatActivity {
             }
         });
     }
-
 }

@@ -8,6 +8,8 @@ public class User {
     private String lastname;
     private String phoneno;
     private String uid;
+    private String thumbprofilepic;
+    private String profilepic;
 
     public User() {
     }
@@ -18,7 +20,7 @@ public class User {
         this.middlename = middlename;
         this.lastname = lastname;
         this.phoneno = phoneno;
-        this.uid=uid;
+        this.uid = uid;
 
     }
 
@@ -70,4 +72,19 @@ public class User {
         this.uid = uid;
     }
 
+    public String getProfilepic() {
+        return profilepic;
+    }
+
+    public void setProfilepic(String profilepic) {
+        this.profilepic = profilepic;
+    }
+
+    public String getThumbprofilepic() {
+        return thumbprofilepic;
+    }
+
+    public void setThumbprofilepic(String thumbprofilepic) {
+        this.thumbprofilepic = thumbprofilepic;
+    }
 }

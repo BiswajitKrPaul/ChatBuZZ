@@ -11,6 +11,6 @@ public class StarterApplication extends Application {
     public void onCreate() {
         super.onCreate();
         FirebaseApp.initializeApp(getApplicationContext());
-        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 }

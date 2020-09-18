@@ -2,8 +2,6 @@ package com.example.chattestapp.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -12,13 +10,13 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.chattestapp.Activites.ChatScreen;
 import com.example.chattestapp.DataBaseClasses.Chat;
 import com.example.chattestapp.DataBaseClasses.User;
 import com.example.chattestapp.Listeners.CustomOnClickListener;
 import com.example.chattestapp.R;
 import com.example.chattestapp.ViewHolder.ChatListViewHolder;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -56,9 +54,10 @@ public class ChatListApdater extends RecyclerView.Adapter<ChatListViewHolder> im
     @Override
     public void onBindViewHolder(@NonNull final ChatListViewHolder holder, int position) {
         holder.username.setText(userlist.get(position).getFirstname() + " " + userlist.get(position).getLastname());
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference().child(MESSAGE_DB);
+        mDatabase.keepSynced(true);
         mStorage = FirebaseStorage.getInstance().getReference().child(PROFILE_PIC_STORAGE).child(PROFILE_THUMB_STORAGE);
-        mDatabase.child(MESSAGE_DB).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(userlist.get(position).getUid()).orderByKey().limitToLast(1).addChildEventListener(new ChildEventListener() {
+        mDatabase.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(userlist.get(position).getUid()).orderByKey().limitToLast(1).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 lastText = dataSnapshot.getValue(Chat.class).getMessageBody();
@@ -89,14 +88,7 @@ public class ChatListApdater extends RecyclerView.Adapter<ChatListViewHolder> im
 
             }
         });
-        mStorage.child(userlist.get(position).getUid() + ".jpg").getBytes(2048 * 2048).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                Glide.with(context).load(bitmap).placeholder(R.drawable.profile).into(holder.profilePics);
-            }
-        });
-
+        Glide.with(context).load(userlist.get(position).getThumbprofilepic()).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.profile).into(holder.profilePics);
     }
 
     @Override

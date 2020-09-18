@@ -3,7 +3,6 @@ package com.example.chattestapp.Fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,18 +16,20 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.chattestapp.DataBaseClasses.User;
 import com.example.chattestapp.R;
 import com.example.chattestapp.Utils.ChatUtils;
 import com.github.dhaval2404.imagepicker.ImagePicker;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -36,6 +37,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
@@ -73,22 +75,18 @@ public class ProfileFragment extends Fragment {
 
     public void getProfileImageUri(FirebaseUser user) {
 
-        try {
-            mStorage.child(PROFILE_THUMB_STORAGE).child(user.getUid() + ".jpg").getBytes(2048 * 2048).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    Glide.with(getActivity()).load(bitmap).placeholder(R.drawable.profile).into(profilePic);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    bitmap = null;
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        mDataBase.child(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                Glide.with(getActivity()).load(user.getProfilepic()).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(false).placeholder(R.drawable.profile).into(profilePic);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
@@ -106,6 +104,7 @@ public class ProfileFragment extends Fragment {
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         mStorage = FirebaseStorage.getInstance().getReference().child(PROFILE_PIC_STORAGE);
         mDataBase = FirebaseDatabase.getInstance().getReference().child(USER_DB);
+        mDataBase.keepSynced(true);
         profilePic = view.findViewById(R.id.profile_imageview);
         getProfileImageUri(mUser);
         uploadPic.setOnClickListener(new View.OnClickListener() {
@@ -139,22 +138,46 @@ public class ProfileFragment extends Fragment {
         mStorage.child(mUser.getUid() + ".jpg").putFile(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(final UploadTask.TaskSnapshot taskSnapshot) {
-                System.out.println(data.getPath());
                 try {
                     Bitmap bitmap = new Compressor(getContext()).setMaxHeight(200).setMaxWidth(200).setQuality(75).compressToBitmap(new File(data.getPath()));
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
                     final byte[] bytes = byteArrayOutputStream.toByteArray();
-                    mStorage.child(PROFILE_THUMB_STORAGE).child(mUser.getUid() + ".jpg").putBytes(bytes).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    mStorage.child(PROFILE_THUMB_STORAGE).child(mUser.getUid() + ".jpg").putBytes(bytes).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
-                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                Glide.with(getActivity()).load(bytes).placeholder(R.drawable.profile).diskCacheStrategy(DiskCacheStrategy.ALL).into(profilePic);
-                                ChatUtils.maketoast(getActivity(), "Image Changed");
-                            }
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            mStorage.child(PROFILE_THUMB_STORAGE).child(mUser.getUid() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri1) {
+                                    final HashMap map = new HashMap();
+                                    map.put("thumbprofilepic", uri1.toString());
+                                    mStorage.child(mUser.getUid() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri2) {
+                                            map.put("profilepic", uri2.toString());
+                                            mDataBase.child(mUser.getUid()).updateChildren(map).addOnSuccessListener(new OnSuccessListener() {
+                                                @Override
+                                                public void onSuccess(Object o) {
+                                                    Glide.with(getActivity()).load(map.get("profilepic").toString()).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(false).placeholder(R.drawable.profile).into(profilePic);
+                                                    ChatUtils.maketoast(getContext(), "Profile Pic Updated");
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    ChatUtils.maketoast(getContext(), "Profile Pic Updated Failed : " + e.getMessage());
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            ChatUtils.maketoast(getContext(), "Profile Pic Updated Failed : " + e.getMessage());
                         }
                     });
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
