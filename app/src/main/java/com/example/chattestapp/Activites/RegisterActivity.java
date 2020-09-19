@@ -91,6 +91,7 @@ public class RegisterActivity extends AppCompatActivity {
             user.setMiddlename(middlename);
             user.setLastname(lastname);
             user.setPhoneno(phone);
+            user.setOnline("true");
 
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
@@ -114,11 +115,11 @@ public class RegisterActivity extends AppCompatActivity {
                             });
                         } catch (Exception e) {
                             mAuth.getCurrentUser().delete();
-                            Log.e(TAG,e.getMessage());
+                            Log.e(TAG, e.getMessage());
                             ChatUtils.maketoast(getApplicationContext(), "Registration Failed due to : " + e.getMessage());
                         }
                     } else {
-                        Log.e(TAG,task.getException().getMessage());
+                        Log.e(TAG, task.getException().getMessage());
                         ChatUtils.maketoast(getApplicationContext(), "Registration Failed due to : " + task.getException().getMessage());
                     }
                 }

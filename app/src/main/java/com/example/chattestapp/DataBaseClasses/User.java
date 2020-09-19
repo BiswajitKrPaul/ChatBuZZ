@@ -10,17 +10,19 @@ public class User {
     private String uid;
     private String thumbprofilepic;
     private String profilepic;
+    private String isOnline;
 
     public User() {
     }
 
-    public User(String email, String firstname, String middlename, String lastname, String phoneno, String uid) {
+    public User(String email, String firstname, String middlename, String lastname, String phoneno, String uid, String isOnline) {
         this.email = email;
         this.firstname = firstname;
         this.middlename = middlename;
         this.lastname = lastname;
         this.phoneno = phoneno;
         this.uid = uid;
+        this.isOnline = isOnline;
 
     }
 
@@ -78,6 +80,14 @@ public class User {
 
     public void setProfilepic(String profilepic) {
         this.profilepic = profilepic;
+    }
+
+    public String getOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(String isOnline) {
+        this.isOnline = isOnline;
     }
 
     public String getThumbprofilepic() {

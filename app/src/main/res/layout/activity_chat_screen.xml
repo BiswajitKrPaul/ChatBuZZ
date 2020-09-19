@@ -35,9 +35,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:menu="@menu/main_menu"
+                app:subtitleTextColor="@color/white"
                 app:title="@string/app_name"
                 app:titleTextColor="@color/white" />
         </com.google.android.material.appbar.AppBarLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/chatlist_appbar"
+            android:layout_alignBottom="@id/chatlist_appbar"
+            android:layout_marginLeft="25dp"
+            android:text="Online"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <LinearLayout

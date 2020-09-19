@@ -23,6 +23,7 @@ import com.example.chattestapp.DataBaseClasses.Chat;
 import com.example.chattestapp.DataBaseClasses.User;
 import com.example.chattestapp.R;
 import com.example.chattestapp.Utils.ChatUtils;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -33,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -117,6 +119,11 @@ public class ChatScreen extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 currentUser = dataSnapshot.getValue(User.class);
                 materialToolbar.setTitle(currentUser.getFirstname() + " " + currentUser.getLastname());
+                if ("true".equals(currentUser.getOnline())) {
+                    materialToolbar.setSubtitle("Online");
+                } else if ("false".equals(currentUser.getOnline())) {
+                    materialToolbar.setSubtitle("");
+                }
                 Glide.with(getApplicationContext()).load(currentUser.getThumbprofilepic()).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.profile).into(profilepic);
             }
 
@@ -178,10 +185,19 @@ public class ChatScreen extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.chatlist_logout:
-                        mAuth.signOut();
-                        Intent intent = new Intent(ChatScreen.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
+                        if (mAuth.getCurrentUser() != null) {
+                            HashMap status = new HashMap();
+                            status.put("online", "false");
+                            mDatabase.child(USER_DB).child(mAuth.getCurrentUser().getUid()).updateChildren(status).addOnSuccessListener(new OnSuccessListener() {
+                                @Override
+                                public void onSuccess(Object o) {
+                                    mAuth.signOut();
+                                    Intent intent = new Intent(ChatScreen.this, MainActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                }
+                            });
+                        }
                         return true;
                     default:
                         return true;
@@ -268,5 +284,25 @@ public class ChatScreen extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void UpdateOnlineStatus(String isOnline) {
+        if (mAuth.getCurrentUser() != null) {
+            HashMap status = new HashMap();
+            status.put("online", isOnline);
+            mDatabase.child(USER_DB).child(mAuth.getCurrentUser().getUid()).updateChildren(status);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UpdateOnlineStatus("true");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        UpdateOnlineStatus("false");
     }
 }
