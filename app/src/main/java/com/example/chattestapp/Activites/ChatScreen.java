@@ -234,7 +234,7 @@ public class ChatScreen extends AppCompatActivity {
         String message = et_textBody.getText().toString();
         et_textBody.setText("");
         if (TextUtils.isEmpty(message)) {
-            ChatUtils.maketoast(ChatScreen.this, "Please type message body");
+            ChatUtils.maketoast(ChatScreen.this, "Please type message body.....");
         } else {
             chat = new Chat();
             chat.setSenderUid(senderUid);
