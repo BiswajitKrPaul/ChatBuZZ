@@ -31,9 +31,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -122,7 +126,7 @@ public class ChatScreen extends AppCompatActivity {
                 if ("true".equals(currentUser.getOnline())) {
                     materialToolbar.setSubtitle("Online");
                 } else if ("false".equals(currentUser.getOnline())) {
-                    materialToolbar.setSubtitle("");
+                    materialToolbar.setSubtitle(getDate(currentUser.getLastseen()));
                 }
                 Glide.with(getApplicationContext()).load(currentUser.getThumbprofilepic()).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.profile).into(profilepic);
             }
@@ -132,6 +136,24 @@ public class ChatScreen extends AppCompatActivity {
 
             }
         });
+    }
+
+    private String getDate(Long lastseen) {
+        String lastseenDate = null;
+
+        Timestamp timestamp = new Timestamp(lastseen);
+        Date date = new Date(timestamp.getTime());
+
+        SimpleDateFormat dateTimeDay = new SimpleDateFormat("EEE-dd hh:mm aa");
+        SimpleDateFormat dateTime = new SimpleDateFormat("hh:mm aa");
+        Date currentdate = new Date();
+        if (date.before(currentdate))
+            lastseenDate = "Last seen On " + dateTimeDay.format(date) + " ";
+        else
+            lastseenDate = "Last seen Today On " + dateTime.format(date) + "";
+
+        return lastseenDate;
+
     }
 
     private void LoadMoreData() {
@@ -188,6 +210,7 @@ public class ChatScreen extends AppCompatActivity {
                         if (mAuth.getCurrentUser() != null) {
                             HashMap status = new HashMap();
                             status.put("online", "false");
+                            status.put("lastseen", ServerValue.TIMESTAMP);
                             mDatabase.child(USER_DB).child(mAuth.getCurrentUser().getUid()).updateChildren(status).addOnSuccessListener(new OnSuccessListener() {
                                 @Override
                                 public void onSuccess(Object o) {
@@ -286,10 +309,12 @@ public class ChatScreen extends AppCompatActivity {
         });
     }
 
-    private void UpdateOnlineStatus(String isOnline) {
+    private void UpdateOnlineStatus(String online) {
         if (mAuth.getCurrentUser() != null) {
             HashMap status = new HashMap();
-            status.put("online", isOnline);
+            status.put("online", online);
+            if ("false".equals(online))
+                status.put("lastseen", ServerValue.TIMESTAMP);
             mDatabase.child(USER_DB).child(mAuth.getCurrentUser().getUid()).updateChildren(status);
         }
     }

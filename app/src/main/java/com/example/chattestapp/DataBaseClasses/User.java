@@ -10,20 +10,23 @@ public class User {
     private String uid;
     private String thumbprofilepic;
     private String profilepic;
-    private String isOnline;
+    private String online;
+    private Long lastseen;
 
     public User() {
     }
 
-    public User(String email, String firstname, String middlename, String lastname, String phoneno, String uid, String isOnline) {
+    public User(String email, String firstname, String middlename, String lastname, String phoneno, String uid, String thumbprofilepic, String profilepic, String online, Long lastseen) {
         this.email = email;
         this.firstname = firstname;
         this.middlename = middlename;
         this.lastname = lastname;
         this.phoneno = phoneno;
         this.uid = uid;
-        this.isOnline = isOnline;
-
+        this.thumbprofilepic = thumbprofilepic;
+        this.profilepic = profilepic;
+        this.online = online;
+        this.lastseen = lastseen;
     }
 
     public String getEmail() {
@@ -74,6 +77,14 @@ public class User {
         this.uid = uid;
     }
 
+    public String getThumbprofilepic() {
+        return thumbprofilepic;
+    }
+
+    public void setThumbprofilepic(String thumbprofilepic) {
+        this.thumbprofilepic = thumbprofilepic;
+    }
+
     public String getProfilepic() {
         return profilepic;
     }
@@ -83,18 +94,18 @@ public class User {
     }
 
     public String getOnline() {
-        return isOnline;
+        return online;
     }
 
-    public void setOnline(String isOnline) {
-        this.isOnline = isOnline;
+    public void setOnline(String online) {
+        this.online = online;
     }
 
-    public String getThumbprofilepic() {
-        return thumbprofilepic;
+    public Long getLastseen() {
+        return lastseen;
     }
 
-    public void setThumbprofilepic(String thumbprofilepic) {
-        this.thumbprofilepic = thumbprofilepic;
+    public void setLastseen(Long lastseen) {
+        this.lastseen = lastseen;
     }
 }

@@ -62,12 +62,13 @@ public class ChatScreenAdapter extends RecyclerView.Adapter<ChatScreenViewHolder
         } else {
             holder.sendertext.setVisibility(View.GONE);
             holder.recieverText.setText(chat.getMessageBody());
-            mDatabase.child(recieverUid).addValueEventListener(new ValueEventListener() {
+            mDatabase.child(recieverUid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Glide.with(context).load(dataSnapshot.getValue(User.class).getThumbprofilepic()).placeholder(R.drawable.profile).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.recieverProfilePic);
+                    if (dataSnapshot.getValue() != null) {
+                        Glide.with(context).load(dataSnapshot.getValue(User.class).getThumbprofilepic()).placeholder(R.drawable.profile).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.recieverProfilePic);
+                    }
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 

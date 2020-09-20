@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 
 import java.util.HashMap;
 
@@ -55,11 +56,13 @@ public class ChatList extends AppCompatActivity {
         }
     }
 
-    private void UpdateOnlineStatus(String isOnline) {
+    private void UpdateOnlineStatus(String online) {
 
         if (mAuth.getCurrentUser() != null) {
             HashMap status = new HashMap();
-            status.put("online", isOnline);
+            status.put("online", online);
+            if ("false".equals(online))
+                status.put("lastseen", ServerValue.TIMESTAMP);
             mDataBase.child(mAuth.getCurrentUser().getUid()).updateChildren(status);
         }
     }
@@ -73,6 +76,7 @@ public class ChatList extends AppCompatActivity {
                         if (mAuth.getCurrentUser() != null) {
                             HashMap status = new HashMap();
                             status.put("online", "false");
+                            status.put("lastseen", ServerValue.TIMESTAMP);
                             mDataBase.child(mAuth.getCurrentUser().getUid()).updateChildren(status).addOnSuccessListener(new OnSuccessListener() {
                                 @Override
                                 public void onSuccess(Object o) {
