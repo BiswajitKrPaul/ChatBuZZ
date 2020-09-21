@@ -24,6 +24,8 @@ import java.util.ArrayList;
 
 public class ChatScreenAdapter extends RecyclerView.Adapter<ChatScreenViewHolder> {
 
+    private static String SEEN_TEXT = "Seen";
+    private static String DELIVERED_TEXT = "Delivered";
     Context context;
     private ArrayList<Chat> chatList = new ArrayList<Chat>();
     private String senderUid;
@@ -35,13 +37,9 @@ public class ChatScreenAdapter extends RecyclerView.Adapter<ChatScreenViewHolder
         this.context = context;
         this.senderUid = senderUid;
         this.recieverUid = recieverUid;
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
+        mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
-    /*public void updateMessageList(Chat chat) {
-        chatList.add(chat);
-        notifyItemInserted(chatList.size() - 1);
-    }*/
 
     @NonNull
     @Override
@@ -55,20 +53,32 @@ public class ChatScreenAdapter extends RecyclerView.Adapter<ChatScreenViewHolder
         holder.recieverText.setVisibility(View.VISIBLE);
         holder.sendertext.setVisibility(View.VISIBLE);
         holder.recieverProfilePic.setVisibility(View.VISIBLE);
+        holder.seenTxt.setVisibility(View.VISIBLE);
         if (senderUid.equals(chat.getSenderUid())) {
             holder.sendertext.setText(chat.getMessageBody());
+            if (chatList.size()-1  == position) {
+                if (chat.isIsseen()) {
+                    holder.seenTxt.setText(SEEN_TEXT);
+                } else {
+                    holder.seenTxt.setText(DELIVERED_TEXT);
+                }
+            } else {
+                holder.seenTxt.setVisibility(View.GONE);
+            }
             holder.recieverText.setVisibility(View.GONE);
             holder.recieverProfilePic.setVisibility(View.GONE);
         } else {
             holder.sendertext.setVisibility(View.GONE);
             holder.recieverText.setText(chat.getMessageBody());
-            mDatabase.child(recieverUid).addListenerForSingleValueEvent(new ValueEventListener() {
+            holder.seenTxt.setVisibility(View.GONE);
+            mDatabase.child("users").child(recieverUid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.getValue() != null) {
                         Glide.with(context).load(dataSnapshot.getValue(User.class).getThumbprofilepic()).placeholder(R.drawable.profile).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.recieverProfilePic);
                     }
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 

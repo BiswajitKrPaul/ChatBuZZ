@@ -13,13 +13,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatScreenViewHolder extends RecyclerView.ViewHolder {
 
-    public TextView sendertext, recieverText;
+    public TextView sendertext, recieverText, seenTxt;
     public CircleImageView recieverProfilePic;
 
     public ChatScreenViewHolder(@NonNull View itemView) {
         super(itemView);
         sendertext = itemView.findViewById(R.id.sender_messsage_text);
         recieverText = itemView.findViewById(R.id.receiver_message_text);
+        seenTxt = itemView.findViewById(R.id.sender_message_seen);
         recieverProfilePic = itemView.findViewById(R.id.chatscreen_recieverdp);
     }
 }

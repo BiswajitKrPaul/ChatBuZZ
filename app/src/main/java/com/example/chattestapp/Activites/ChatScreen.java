@@ -44,6 +44,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatScreen extends AppCompatActivity {
 
+    public static ValueEventListener seenListener;
+    public static ChildEventListener seenListener1;
     static String MESSAGE_DB = "chat";
     static String USER_DB = "users";
     static String TAG = "ChatScreen";
@@ -77,19 +79,18 @@ public class ChatScreen extends AppCompatActivity {
         senderUid = mAuth.getUid();
         currentUser = new User();
         et_textBody = findViewById(R.id.chatscreen_messagebody);
-        chatScreenAdapter = new ChatScreenAdapter(ChatScreen.this, senderUid, chats, recieverUid);
         recyclerView = findViewById(R.id.chatscreen_recylerview);
         recyclerView.setHasFixedSize(true);
         linearLayoutManage = new LinearLayoutManager(ChatScreen.this);
         profilepic = findViewById(R.id.chatscreen_profilepic);
         recyclerView.setLayoutManager(linearLayoutManage);
         swipeRefreshLayout = findViewById(R.id.swiperefresh);
-        recyclerView.setAdapter(chatScreenAdapter);
         chats.clear();
-        LoadData();
         firstDataKey();
         OnClickToolBar();
         LoadToolBar();
+        SeenMessage();
+        LoadData();
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -114,6 +115,17 @@ public class ChatScreen extends AppCompatActivity {
                 }
             }
         });
+
+        seenListener = mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void LoadToolBar() {
@@ -136,6 +148,8 @@ public class ChatScreen extends AppCompatActivity {
 
             }
         });
+        chatScreenAdapter = new ChatScreenAdapter(getApplicationContext(), senderUid, chats, recieverUid);
+        recyclerView.setAdapter(chatScreenAdapter);
     }
 
     private String getDate(Long lastseen) {
@@ -286,7 +300,6 @@ public class ChatScreen extends AppCompatActivity {
                             @Override
                             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                 Log.i(TAG, "Completed posting text");
-                                // ChatUtils.maketoast(ChatScreen.this, "Message Sent");
                             }
                         });
                     }
@@ -319,15 +332,58 @@ public class ChatScreen extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //UpdateOnlineStatus("true");
+
+    private void SeenMessage() {
+        itemPos1 = 0;
+        seenListener1 = mDatabase.child(MESSAGE_DB).child(recieverUid).child(senderUid).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                final Chat chat = dataSnapshot.getValue(Chat.class);
+                if (!chat.getSenderUid().equals(senderUid)) {
+                    HashMap hm = new HashMap();
+                    hm.put("isseen", true);
+                    dataSnapshot.getRef().updateChildren(hm).addOnSuccessListener(new OnSuccessListener() {
+                        @Override
+                        public void onSuccess(Object o) {
+
+                        }
+                    });
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        //UpdateOnlineStatus("false");
+        mDatabase.child(MESSAGE_DB).child(recieverUid).child(senderUid).removeEventListener(seenListener1);
+        mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).removeEventListener(seenListener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        itemPos1 = 0;
     }
 }

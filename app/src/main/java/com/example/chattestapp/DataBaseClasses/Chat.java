@@ -4,14 +4,16 @@ public class Chat {
 
     private String senderUid;
     private String messageBody;
+    private boolean isseen;
 
 
     public Chat() {
     }
 
-    public Chat(String senderUid, String messageBody) {
+    public Chat(String senderUid, String messageBody, boolean isseen) {
         this.senderUid = senderUid;
         this.messageBody = messageBody;
+        this.isseen = isseen;
     }
 
     public String getSenderUid() {
@@ -28,5 +30,13 @@ public class Chat {
 
     public void setMessageBody(String messageBody) {
         this.messageBody = messageBody;
+    }
+
+    public boolean isIsseen() {
+        return isseen;
+    }
+
+    public void setIsseen(boolean isseen) {
+        this.isseen = isseen;
     }
 }

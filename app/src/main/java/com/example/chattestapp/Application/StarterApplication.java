@@ -1,9 +1,6 @@
 package com.example.chattestapp.Application;
 
 import android.app.Application;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
@@ -40,15 +37,9 @@ public class StarterApplication extends Application implements LifecycleObserver
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     public void onAppBackgrounded() {
         if (mAuth.getCurrentUser() != null) {
-            final Handler handler = new Handler(Looper.myLooper());
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //Do something after 100ms
-                    mDataBase.child(mAuth.getCurrentUser().getUid()).child("online").setValue("false");
-                    mDataBase.child(mAuth.getCurrentUser().getUid()).child("lastseen").setValue(ServerValue.TIMESTAMP);
-                }
-            }, 10000);
+            //Do something after 100ms
+            mDataBase.child(mAuth.getCurrentUser().getUid()).child("online").setValue("false");
+            mDataBase.child(mAuth.getCurrentUser().getUid()).child("lastseen").setValue(ServerValue.TIMESTAMP);
         }
     }
 
