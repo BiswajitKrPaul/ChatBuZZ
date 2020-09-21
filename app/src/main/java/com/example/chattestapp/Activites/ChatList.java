@@ -51,7 +51,7 @@ public class ChatList extends AppCompatActivity {
             mainViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
             viewPager.setAdapter(mainViewPagerAdapter);
             tabLayout.setupWithViewPager(viewPager);
-            UpdateOnlineStatus("true");
+            //UpdateOnlineStatus("true");
             LoadMenuBar();
         }
     }
@@ -93,17 +93,5 @@ public class ChatList extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        UpdateOnlineStatus("true");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        UpdateOnlineStatus("false");
     }
 }

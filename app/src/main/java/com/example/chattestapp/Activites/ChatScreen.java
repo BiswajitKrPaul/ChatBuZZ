@@ -148,7 +148,7 @@ public class ChatScreen extends AppCompatActivity {
         SimpleDateFormat dateTime = new SimpleDateFormat("hh:mm aa");
         Date currentdate = new Date();
         if (date.before(currentdate))
-            lastseenDate = "Last seen On " + dateTimeDay.format(date) + " ";
+            lastseenDate = "Last seen On " + dateTimeDay.format(date) + "";
         else
             lastseenDate = "Last seen Today On " + dateTime.format(date) + "";
 
@@ -322,12 +322,12 @@ public class ChatScreen extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        UpdateOnlineStatus("true");
+        //UpdateOnlineStatus("true");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        UpdateOnlineStatus("false");
+        //UpdateOnlineStatus("false");
     }
 }
