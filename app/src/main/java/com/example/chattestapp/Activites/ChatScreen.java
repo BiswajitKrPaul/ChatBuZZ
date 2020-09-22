@@ -1,6 +1,8 @@
 package com.example.chattestapp.Activites;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -74,6 +76,9 @@ public class ChatScreen extends AppCompatActivity {
     User currentUser;
     APIService apiService;
     Boolean notify = false;
+    BitmapDrawable bitmap;
+    Bitmap image;
+    User senderUser;
     private LinearLayoutManager linearLayoutManage;
 
     @Override
@@ -81,6 +86,7 @@ public class ChatScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_screen);
         recieverUid = getIntent().getStringExtra("uid");
+        ChatUtils.Chat_UID = recieverUid;
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.keepSynced(true);
@@ -88,6 +94,7 @@ public class ChatScreen extends AppCompatActivity {
         materialToolbar = findViewById(R.id.chatscreen_toolbar);
         senderUid = mAuth.getUid();
         currentUser = new User();
+        senderUser = new User();
         et_textBody = findViewById(R.id.chatscreen_messagebody);
         recyclerView = findViewById(R.id.chatscreen_recylerview);
         recyclerView.setHasFixedSize(true);
@@ -150,6 +157,7 @@ public class ChatScreen extends AppCompatActivity {
             }
         });
 
+
     }
 
     private void LoadToolBar() {
@@ -173,6 +181,8 @@ public class ChatScreen extends AppCompatActivity {
             }
         });
         chatScreenAdapter = new ChatScreenAdapter(getApplicationContext(), senderUid, chats, recieverUid);
+        bitmap = (BitmapDrawable) profilepic.getDrawable();
+        image = bitmap.getBitmap();
         recyclerView.setAdapter(chatScreenAdapter);
     }
 
@@ -355,26 +365,40 @@ public class ChatScreen extends AppCompatActivity {
 
     private void sendNotifiaction(final String recieverUid, final String firstname, final String message) {
 
-        mDatabase.child(USER_DB).child(recieverUid).addListenerForSingleValueEvent(new ValueEventListener() {
+
+        mDatabase.child(USER_DB).child(senderUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String recieverToken = dataSnapshot.getValue(User.class).getToken();
-                Data data = new Data(senderUid, recieverUid, firstname + ": " + message, "New Message", R.drawable.profile);
-                Sender sender = new Sender(data, recieverToken);
-                apiService.sendNotification(sender).enqueue(new Callback<Response>() {
+
+                senderUser = dataSnapshot.getValue(User.class);
+
+                mDatabase.child(USER_DB).child(recieverUid).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
-                        if (response.code() == 200) {
-                            if (response.body().success != 1) {
-                                ChatUtils.maketoast(ChatScreen.this, "Failed!");
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String recieverToken = dataSnapshot.getValue(User.class).getToken();
+                        Data data = new Data(senderUid, recieverUid, senderUser.getFirstname() + ": " + message, "New Message", R.drawable.app_image);
+                        Sender sender = new Sender(data, recieverToken);
+                        apiService.sendNotification(sender).enqueue(new Callback<Response>() {
+                            @Override
+                            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                                if (response.code() == 200) {
+                                    if (response.body().success != 1) {
+                                        ChatUtils.maketoast(ChatScreen.this, "Failed!");
+                                    }
+                                } else {
+                                    ChatUtils.maketoast(ChatScreen.this, "Notify");
+                                }
                             }
-                        } else {
-                            ChatUtils.maketoast(ChatScreen.this, "Notify");
-                        }
+
+                            @Override
+                            public void onFailure(Call<Response> call, Throwable t) {
+
+                            }
+                        });
                     }
 
                     @Override
-                    public void onFailure(Call<Response> call, Throwable t) {
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
                 });
@@ -385,6 +409,8 @@ public class ChatScreen extends AppCompatActivity {
 
             }
         });
+
+
     }
 
     public void firstDataKey() {
@@ -460,11 +486,14 @@ public class ChatScreen extends AppCompatActivity {
             mDatabase.child(MESSAGE_DB).child(recieverUid).child(senderUid).removeEventListener(seenListener1);
         if (seenListener != null)
             mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).removeEventListener(seenListener);
+
+        ChatUtils.Chat_UID = "";
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         itemPos1 = 0;
+        ChatUtils.Chat_UID = recieverUid;
     }
 }

@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.example.chattestapp.Activites.ChatScreen;
+import com.example.chattestapp.Utils.ChatUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -34,7 +35,7 @@ public class MyFireBaseMessaging extends FirebaseMessagingService {
 
         if (currentUser != null && recieveruseruid.equals(currentUser.getUid())) {
 
-            if (!currentUser.getUid().equals(senderuseruid)) {
+            if (!ChatUtils.Chat_UID.equals(senderuseruid)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     sendOreoNotification(remoteMessage);
                 } else {
@@ -52,18 +53,21 @@ public class MyFireBaseMessaging extends FirebaseMessagingService {
         String body = remoteMessage.getData().get("textMessage");
 
         RemoteMessage.Notification notification = remoteMessage.getNotification();
-        // int j = Integer.parseInt(user.replaceAll("[\\D]", ""));
+        int j = Integer.parseInt(senderuseruid.replaceAll("[\\D]", ""));
         Intent intent = new Intent(this, ChatScreen.class);
         intent.putExtra("uid", senderuseruid);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 200, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT);
         Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         OreoNotification oreoNotification = new OreoNotification(this);
         Notification.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent,
                 defaultSound, icon);
 
-        int i = 1;
+        int i = 0;
+        if (j > 0) {
+            i = j;
+        }
 
         oreoNotification.getManager().notify(i, builder.build());
 
@@ -77,11 +81,11 @@ public class MyFireBaseMessaging extends FirebaseMessagingService {
         String body = remoteMessage.getData().get("textMessage");
 
         RemoteMessage.Notification notification = remoteMessage.getNotification();
-        //int j = Integer.parseInt(user.replaceAll("[\\D]", ""));
+        int j = Integer.parseInt(senderuseruid.replaceAll("[\\D]", ""));
         Intent intent = new Intent(this, ChatScreen.class);
         intent.putExtra("uid", senderuseruid);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 200, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_IMMUTABLE);
 
         Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
@@ -93,7 +97,10 @@ public class MyFireBaseMessaging extends FirebaseMessagingService {
                 .setContentIntent(pendingIntent);
         NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        int i = 1;
+        int i = 0;
+        if (j > 0) {
+            i = j;
+        }
 
         noti.notify(i, builder.build());
     }
