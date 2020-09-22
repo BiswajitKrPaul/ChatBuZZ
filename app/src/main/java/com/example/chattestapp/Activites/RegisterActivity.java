@@ -21,6 +21,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -99,17 +101,25 @@ public class RegisterActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         try {
                             user.setUid(mAuth.getUid());
-                            mDatabase.child(USER_DB).child(mAuth.getUid()).setValue(user, new DatabaseReference.CompletionListener() {
+                            FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                                 @Override
-                                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                    if (databaseError == null) {
-                                        Intent intent = new Intent(RegisterActivity.this, ChatList.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        startActivity(intent);
-                                    } else {
-                                        mAuth.getCurrentUser().delete();
-                                        Log.e(TAG, databaseError.getMessage());
-                                        ChatUtils.maketoast(getApplicationContext(), "Registration Failed due to : " + databaseError.getMessage());
+                                public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                    if (task.isSuccessful()) {
+                                        user.setToken(task.getResult().getToken());
+                                        mDatabase.child(USER_DB).child(mAuth.getUid()).setValue(user, new DatabaseReference.CompletionListener() {
+                                            @Override
+                                            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                                if (databaseError == null) {
+                                                    Intent intent = new Intent(RegisterActivity.this, ChatList.class);
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                    startActivity(intent);
+                                                } else {
+                                                    mAuth.getCurrentUser().delete();
+                                                    Log.e(TAG, databaseError.getMessage());
+                                                    ChatUtils.maketoast(getApplicationContext(), "Registration Failed due to : " + databaseError.getMessage());
+                                                }
+                                            }
+                                        });
                                     }
                                 }
                             });

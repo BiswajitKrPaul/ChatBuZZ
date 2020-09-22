@@ -21,6 +21,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.chattestapp.Adapters.ChatScreenAdapter;
 import com.example.chattestapp.DataBaseClasses.Chat;
 import com.example.chattestapp.DataBaseClasses.User;
+import com.example.chattestapp.Notifications.APIService;
+import com.example.chattestapp.Notifications.Client;
+import com.example.chattestapp.Notifications.Data;
+import com.example.chattestapp.Notifications.Response;
+import com.example.chattestapp.Notifications.Sender;
 import com.example.chattestapp.R;
 import com.example.chattestapp.Utils.ChatUtils;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -41,6 +46,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class ChatScreen extends AppCompatActivity {
 
@@ -65,6 +72,8 @@ public class ChatScreen extends AppCompatActivity {
     CircleImageView profilepic;
     int itemPos = 0, itemPos1 = 0;
     User currentUser;
+    APIService apiService;
+    Boolean notify = false;
     private LinearLayoutManager linearLayoutManage;
 
     @Override
@@ -75,6 +84,7 @@ public class ChatScreen extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.keepSynced(true);
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
         materialToolbar = findViewById(R.id.chatscreen_toolbar);
         senderUid = mAuth.getUid();
         currentUser = new User();
@@ -116,9 +126,22 @@ public class ChatScreen extends AppCompatActivity {
             }
         });
 
-        seenListener = mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).addValueEventListener(new ValueEventListener() {
+        seenListener = mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).limitToLast(1).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren() && chats.size() > 0) {
+                    Chat chat = dataSnapshot.getChildren().iterator().next().getValue(Chat.class);
+                    Chat tempChat = chats.get(chats.size() - 1);
+                    if (chat.getChatid() != null) {
+                        if (chat.isIsseen() != tempChat.isIsseen()) {
+                            int pos = chats.indexOf(tempChat);
+                            chats.remove(pos);
+                            chats.add(pos, chat);
+                            chatScreenAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+
             }
 
             @Override
@@ -126,6 +149,7 @@ public class ChatScreen extends AppCompatActivity {
 
             }
         });
+
     }
 
     private void LoadToolBar() {
@@ -284,28 +308,83 @@ public class ChatScreen extends AppCompatActivity {
     }
 
     public void Send(View view) {
-        String message = et_textBody.getText().toString();
+        final String message = et_textBody.getText().toString();
         et_textBody.setText("");
         if (TextUtils.isEmpty(message)) {
             ChatUtils.maketoast(ChatScreen.this, "Please type message body.....");
         } else {
             chat = new Chat();
+            notify = true;
             chat.setSenderUid(senderUid);
             chat.setMessageBody(message);
             mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).push().setValue(chat, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                     if (databaseError == null) {
-                        mDatabase.child(MESSAGE_DB).child(recieverUid).child(senderUid).push().setValue(chat, new DatabaseReference.CompletionListener() {
+                        HashMap hashMap = new HashMap();
+                        hashMap.put("chatid", databaseReference.getKey());
+                        mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).child(databaseReference.getKey()).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
                             @Override
-                            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                Log.i(TAG, "Completed posting text");
+                            public void onSuccess(Object o) {
+                                mDatabase.child(MESSAGE_DB).child(recieverUid).child(senderUid).push().setValue(chat, new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                        if (databaseError == null) {
+                                            HashMap hashMap = new HashMap();
+                                            hashMap.put("chatid", databaseReference.getKey());
+                                            mDatabase.child(MESSAGE_DB).child(recieverUid).child(senderUid).child(databaseReference.getKey()).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
+                                                @Override
+                                                public void onSuccess(Object o) {
+                                                    Log.i(TAG, "Completed posting text");
+                                                    if (notify) {
+                                                        sendNotifiaction(recieverUid, currentUser.getFirstname(), chat.getMessageBody());
+                                                    }
+                                                    notify = false;
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
                             }
                         });
                     }
                 }
             });
         }
+    }
+
+    private void sendNotifiaction(final String recieverUid, final String firstname, final String message) {
+
+        mDatabase.child(USER_DB).child(recieverUid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String recieverToken = dataSnapshot.getValue(User.class).getToken();
+                Data data = new Data(senderUid, recieverUid, firstname + ": " + message, "New Message", R.drawable.profile);
+                Sender sender = new Sender(data, recieverToken);
+                apiService.sendNotification(sender).enqueue(new Callback<Response>() {
+                    @Override
+                    public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                        if (response.code() == 200) {
+                            if (response.body().success != 1) {
+                                ChatUtils.maketoast(ChatScreen.this, "Failed!");
+                            }
+                        } else {
+                            ChatUtils.maketoast(ChatScreen.this, "Notify");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Response> call, Throwable t) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void firstDataKey() {
@@ -377,8 +456,10 @@ public class ChatScreen extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mDatabase.child(MESSAGE_DB).child(recieverUid).child(senderUid).removeEventListener(seenListener1);
-        mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).removeEventListener(seenListener);
+        if (seenListener1 != null)
+            mDatabase.child(MESSAGE_DB).child(recieverUid).child(senderUid).removeEventListener(seenListener1);
+        if (seenListener != null)
+            mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).removeEventListener(seenListener);
     }
 
     @Override

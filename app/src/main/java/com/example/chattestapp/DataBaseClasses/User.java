@@ -12,6 +12,7 @@ public class User {
     private String profilepic;
     private String online;
     private Long lastseen;
+    private String token;
 
     public User() {
     }
@@ -107,5 +108,13 @@ public class User {
 
     public void setLastseen(Long lastseen) {
         this.lastseen = lastseen;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

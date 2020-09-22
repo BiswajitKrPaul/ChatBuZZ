@@ -5,6 +5,7 @@ public class Chat {
     private String senderUid;
     private String messageBody;
     private boolean isseen;
+    private String chatid;
 
 
     public Chat() {
@@ -38,5 +39,13 @@ public class Chat {
 
     public void setIsseen(boolean isseen) {
         this.isseen = isseen;
+    }
+
+    public String getChatid() {
+        return chatid;
+    }
+
+    public void setChatid(String chatid) {
+        this.chatid = chatid;
     }
 }

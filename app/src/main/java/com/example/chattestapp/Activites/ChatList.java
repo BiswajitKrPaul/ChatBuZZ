@@ -51,9 +51,13 @@ public class ChatList extends AppCompatActivity {
             mainViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
             viewPager.setAdapter(mainViewPagerAdapter);
             tabLayout.setupWithViewPager(viewPager);
-            //UpdateOnlineStatus("true");
+            UpdateOnlineStatus("true");
             LoadMenuBar();
+            RefreshToken();
         }
+    }
+
+    private void RefreshToken() {
     }
 
     private void UpdateOnlineStatus(String online) {
