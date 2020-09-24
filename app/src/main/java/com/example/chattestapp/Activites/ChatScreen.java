@@ -327,12 +327,14 @@ public class ChatScreen extends AppCompatActivity {
             notify = true;
             chat.setSenderUid(senderUid);
             chat.setMessageBody(message);
+            chat.setDelivertime(System.currentTimeMillis());
             mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).push().setValue(chat, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                     if (databaseError == null) {
                         HashMap hashMap = new HashMap();
                         hashMap.put("chatid", databaseReference.getKey());
+                        hashMap.put("delivertime", ServerValue.TIMESTAMP);
                         mDatabase.child(MESSAGE_DB).child(senderUid).child(recieverUid).child(databaseReference.getKey()).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
                             @Override
                             public void onSuccess(Object o) {
@@ -342,6 +344,7 @@ public class ChatScreen extends AppCompatActivity {
                                         if (databaseError == null) {
                                             HashMap hashMap = new HashMap();
                                             hashMap.put("chatid", databaseReference.getKey());
+                                            hashMap.put("delivertime", ServerValue.TIMESTAMP);
                                             mDatabase.child(MESSAGE_DB).child(recieverUid).child(senderUid).child(databaseReference.getKey()).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
                                                 @Override
                                                 public void onSuccess(Object o) {
@@ -386,7 +389,7 @@ public class ChatScreen extends AppCompatActivity {
                                         ChatUtils.maketoast(ChatScreen.this, "Failed!");
                                     }
                                 } else {
-                                    ChatUtils.maketoast(ChatScreen.this, "Notify");
+                                    //ChatUtils.maketoast(ChatScreen.this, "Notify");
                                 }
                             }
 
@@ -447,6 +450,7 @@ public class ChatScreen extends AppCompatActivity {
                 if (!chat.getSenderUid().equals(senderUid)) {
                     HashMap hm = new HashMap();
                     hm.put("isseen", true);
+                    hm.put("seentime", ServerValue.TIMESTAMP);
                     dataSnapshot.getRef().updateChildren(hm).addOnSuccessListener(new OnSuccessListener() {
                         @Override
                         public void onSuccess(Object o) {

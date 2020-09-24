@@ -3,6 +3,7 @@ package com.example.chattestapp.Activites;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -11,8 +12,10 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.chattestapp.Adapters.MainViewPagerAdapter;
 import com.example.chattestapp.R;
+import com.example.chattestapp.Utils.ChatUtils;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,6 +35,7 @@ public class ChatList extends AppCompatActivity {
     FirebaseUser firebaseUser;
     DatabaseReference mDataBase;
     TabLayout tabLayout;
+    FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +52,30 @@ public class ChatList extends AppCompatActivity {
         } else {
             viewPager = findViewById(R.id.chatlist_viewpager);
             tabLayout = findViewById(R.id.chatlist_tablayout);
+            floatingActionButton = findViewById(R.id.chatlist_alluser);
             mainViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
             viewPager.setAdapter(mainViewPagerAdapter);
             tabLayout.setupWithViewPager(viewPager);
+            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    if (tab.getPosition() != 0) {
+                        floatingActionButton.setVisibility(View.INVISIBLE);
+                    } else {
+                        floatingActionButton.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
+                }
+            });
             UpdateOnlineStatus("true");
             LoadMenuBar();
             RefreshToken();
@@ -97,5 +122,9 @@ public class ChatList extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void allUsers(View view) {
+        ChatUtils.maketoast(getApplicationContext(), "Ohho Working");
     }
 }

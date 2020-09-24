@@ -1,5 +1,7 @@
 package com.example.chattestapp.Adapters;
 
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -9,6 +11,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import com.example.chattestapp.Fragments.ChatList;
 import com.example.chattestapp.Fragments.ProfileFragment;
 import com.example.chattestapp.Fragments.StatusFragment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainViewPagerAdapter extends FragmentPagerAdapter {
 

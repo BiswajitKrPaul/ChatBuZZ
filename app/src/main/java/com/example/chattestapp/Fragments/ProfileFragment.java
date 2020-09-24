@@ -63,6 +63,7 @@ public class ProfileFragment extends Fragment {
     CircleImageView profilePic;
     Bitmap bitmap;
     Uri mCropImageUri;
+    FloatingActionButton allUserFloatingActionButton;
 
 
     public ProfileFragment() {

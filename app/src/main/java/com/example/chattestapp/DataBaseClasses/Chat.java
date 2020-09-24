@@ -6,6 +6,8 @@ public class Chat {
     private String messageBody;
     private boolean isseen;
     private String chatid;
+    private long delivertime;
+    private long seentime;
 
 
     public Chat() {
@@ -47,5 +49,21 @@ public class Chat {
 
     public void setChatid(String chatid) {
         this.chatid = chatid;
+    }
+
+    public long getDelivertime() {
+        return delivertime;
+    }
+
+    public void setDelivertime(long delivertime) {
+        this.delivertime = delivertime;
+    }
+
+    public long getSeentime() {
+        return seentime;
+    }
+
+    public void setSeentime(long seentime) {
+        this.seentime = seentime;
     }
 }

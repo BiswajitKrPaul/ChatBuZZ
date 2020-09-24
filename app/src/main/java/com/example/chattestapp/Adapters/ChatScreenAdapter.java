@@ -20,7 +20,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ChatScreenAdapter extends RecyclerView.Adapter<ChatScreenViewHolder> {
 
@@ -56,11 +59,11 @@ public class ChatScreenAdapter extends RecyclerView.Adapter<ChatScreenViewHolder
         holder.seenTxt.setVisibility(View.VISIBLE);
         if (senderUid.equals(chat.getSenderUid())) {
             holder.sendertext.setText(chat.getMessageBody());
-            if (chatList.size()-1  == position) {
+            if (chatList.size() - 1 == position) {
                 if (chat.isIsseen()) {
-                    holder.seenTxt.setText(SEEN_TEXT);
+                    holder.seenTxt.setText(SEEN_TEXT + " at " + getTimeString(chat.getSeentime()));
                 } else {
-                    holder.seenTxt.setText(DELIVERED_TEXT);
+                    holder.seenTxt.setText(DELIVERED_TEXT + " at " + getTimeString(chat.getDelivertime()));
                 }
             } else {
                 holder.seenTxt.setVisibility(View.GONE);
@@ -85,6 +88,14 @@ public class ChatScreenAdapter extends RecyclerView.Adapter<ChatScreenViewHolder
                 }
             });
         }
+    }
+
+    private String getTimeString(long seentime) {
+        String time = "";
+        Timestamp timestamp = new Timestamp(seentime);
+        Date date = new Date(timestamp.getTime());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("KK:mm a");
+        return simpleDateFormat.format(date) + "";
     }
 
     @Override
