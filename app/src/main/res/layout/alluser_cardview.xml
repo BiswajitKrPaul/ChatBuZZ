@@ -20,9 +20,9 @@
             android:padding="3dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/chatlist_profilePic"
+                android:id="@+id/alluser_profilePic"
                 android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_height="match_parent"
                 android:background="@color/white"
                 android:src="@drawable/profile"
                 app:civ_border_color="@color/white"
@@ -31,28 +31,48 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="5">
 
             <TextView
-                android:id="@+id/chatlist_card_name"
+                android:id="@+id/alluser_card_name"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
-                android:gravity="left"
-                android:textSize="16sp"
+                android:gravity="start"
+                android:text="Name"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/chatlist_card_email"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1"
-                android:gravity="left"
-                android:textSize="12sp" />
+                android:layout_height="0dp"
+                android:layout_gravity="start"
+                android:layout_weight="4"
+                android:orientation="horizontal"
+                android:weightSum="2">
 
+                <Button
+                    android:id="@+id/alluser_sendrequest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:text="Send Request" />
+
+                <Button
+                    android:id="@+id/alluser_rejectrequest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:text="Reject"
+                    android:visibility="gone" />
+            </LinearLayout>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
@@ -60,6 +80,5 @@
                 android:background="@color/black" />
         </LinearLayout>
     </LinearLayout>
-
 
 </com.google.android.material.card.MaterialCardView>

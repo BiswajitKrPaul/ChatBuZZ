@@ -67,12 +67,11 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="20dp"
             android:backgroundTint="@color/colorPrimary"
+            android:onClick="allUsers"
             android:scaleType="center"
             android:src="@drawable/all_users"
             app:borderWidth="0dp"
-            android:onClick="allUsers"
-            app:fabCustomSize="78dp"
-            app:maxImageSize="50dp"
+            app:fabSize="normal"
             app:tint="@color/white" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

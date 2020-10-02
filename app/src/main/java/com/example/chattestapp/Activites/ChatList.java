@@ -12,7 +12,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.chattestapp.Adapters.MainViewPagerAdapter;
 import com.example.chattestapp.R;
-import com.example.chattestapp.Utils.ChatUtils;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -125,6 +124,7 @@ public class ChatList extends AppCompatActivity {
     }
 
     public void allUsers(View view) {
-        ChatUtils.maketoast(getApplicationContext(), "Ohho Working");
+        Intent intent = new Intent(ChatList.this, AllUsers.class);
+        startActivity(intent);
     }
 }

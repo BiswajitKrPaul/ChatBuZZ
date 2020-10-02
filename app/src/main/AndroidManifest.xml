@@ -16,6 +16,7 @@
         android:roundIcon="@drawable/app_image"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
+        <activity android:name=".Activites.AllUsers"></activity>
         <activity
             android:name=".Activites.RegisterActivity"
             android:screenOrientation="portrait"
