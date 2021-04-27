@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -51,17 +52,19 @@ public class ProfileFragment extends Fragment {
 
 
     private static final int PICK_IMAGE_ID = 234;
+    private static final String USER_DB = "users";
     public static String PAGE_TITLE = "Profile";
     public static String PROFILE_PIC_STORAGE = "profilepics";
     public static String PROFILE_THUMB_STORAGE = "thumbprofilepics";
     public static String TAG = "ProfileFragment";
-    private static String USER_DB = "users";
     FloatingActionButton uploadPic;
     FirebaseUser mUser;
     StorageReference mStorage;
     DatabaseReference mDataBase;
     CircleImageView profilePic;
+    TextView txt_profileName, txt_profileEmail;
     Bitmap bitmap;
+    User currentUser;
     Uri mCropImageUri;
     FloatingActionButton allUserFloatingActionButton;
 
@@ -74,13 +77,17 @@ public class ProfileFragment extends Fragment {
         return new ProfileFragment();
     }
 
-    public void getProfileImageUri(FirebaseUser user) {
+    public void getAndSetCurrentUserData() {
 
         mDataBase.child(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                Glide.with(getActivity()).load(user.getProfilepic()).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(false).placeholder(R.drawable.profile).into(profilePic);
+                currentUser = dataSnapshot.getValue(User.class);
+                // Setting Profile Pic
+                Glide.with(getActivity()).load(currentUser.getProfilepic()).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(false).placeholder(R.drawable.profile).into(profilePic);
+                // Setting Profile Name and Email
+                txt_profileName.setText(currentUser.getFirstname() + " " + currentUser.getLastname());
+                txt_profileEmail.setText(currentUser.getEmail());
             }
 
             @Override
@@ -102,12 +109,15 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         uploadPic = view.findViewById(R.id.profile_uploadImg);
+        txt_profileName = view.findViewById(R.id.profile_name);
+        txt_profileEmail = view.findViewById(R.id.profile_email);
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         mStorage = FirebaseStorage.getInstance().getReference().child(PROFILE_PIC_STORAGE);
         mDataBase = FirebaseDatabase.getInstance().getReference().child(USER_DB);
         mDataBase.keepSynced(true);
         profilePic = view.findViewById(R.id.profile_imageview);
-        getProfileImageUri(mUser);
+        currentUser = new User();
+        getAndSetCurrentUserData();
         uploadPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
