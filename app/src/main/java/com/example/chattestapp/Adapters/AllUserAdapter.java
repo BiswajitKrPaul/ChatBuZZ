@@ -18,8 +18,8 @@ import java.util.ArrayList;
 
 public class AllUserAdapter extends RecyclerView.Adapter<AllUserViewHolder> implements CustomOnClickListener {
 
-    private ArrayList<User> userList;
-    private Context context;
+    private final ArrayList<User> userList;
+    private final Context context;
 
     public AllUserAdapter(ArrayList<User> userList, Context context) {
         this.userList = userList;
@@ -33,13 +33,13 @@ public class AllUserAdapter extends RecyclerView.Adapter<AllUserViewHolder> impl
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AllUserViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final AllUserViewHolder holder, int position) {
 
         holder.username.setText(userList.get(position).getFirstname() + " " + userList.get(position).getLastname());
         holder.sendrequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ChatUtils.maketoast(context, userList.get(position).getFirstname());
+               // ChatUtils.maketoast(context, userList.get(position).getFirstname());
             }
         });
 
