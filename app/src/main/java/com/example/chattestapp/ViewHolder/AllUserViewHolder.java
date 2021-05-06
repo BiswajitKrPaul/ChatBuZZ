@@ -23,12 +23,11 @@ public class AllUserViewHolder extends RecyclerView.ViewHolder {
         username = itemView.findViewById(R.id.alluser_card_name);
         sendrequest = itemView.findViewById(R.id.alluser_sendrequest);
         profilePics = itemView.findViewById(R.id.alluser_profilePic);
-
-        /*itemView.setOnClickListener(new View.OnClickListener() {
+        sendrequest.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 clickListener.getPosition(getAdapterPosition());
             }
-        });*/
+        });
     }
 }

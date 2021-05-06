@@ -1,5 +1,6 @@
 package com.example.chattestapp.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,19 +30,13 @@ public class AllUserAdapter extends RecyclerView.Adapter<AllUserViewHolder> impl
     @NonNull
     @Override
     public AllUserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new AllUserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.alluser_cardview, parent, false), this);
+        return new AllUserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.alluser_cardview, parent, false), AllUserAdapter.this);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final AllUserViewHolder holder, int position) {
 
         holder.username.setText(userList.get(position).getFirstname() + " " + userList.get(position).getLastname());
-        holder.sendrequest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               // ChatUtils.maketoast(context, userList.get(position).getFirstname());
-            }
-        });
 
     }
 
@@ -52,6 +47,6 @@ public class AllUserAdapter extends RecyclerView.Adapter<AllUserViewHolder> impl
 
     @Override
     public void getPosition(int pos) {
-        ChatUtils.maketoast(context, "Clicked On Pos : " + pos);
+        ChatUtils.maketoast(context, "Clicked On Button Pos : " + pos);
     }
 }
