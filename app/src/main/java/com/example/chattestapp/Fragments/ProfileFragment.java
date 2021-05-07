@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.chattestapp.Activites.ProfilePictureView;
 import com.example.chattestapp.DataBaseClasses.User;
 import com.example.chattestapp.R;
 import com.example.chattestapp.Utils.ChatUtils;
@@ -124,6 +125,16 @@ public class ProfileFragment extends Fragment {
                 UploadImage();
             }
         });
+
+        profilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ProfilePictureView.class);
+                intent.putExtra("userprofilepic", currentUser.getProfilepic());
+                startActivity(intent);
+            }
+        });
+
         return view;
     }
 
