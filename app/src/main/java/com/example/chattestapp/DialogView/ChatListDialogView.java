@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.chattestapp.Activites.ChatScreen;
+import com.example.chattestapp.Activites.ProfilePictureView;
 import com.example.chattestapp.DataBaseClasses.User;
 import com.example.chattestapp.R;
 
@@ -54,6 +55,18 @@ public class ChatListDialogView extends Dialog {
             public void onClick(View v) {
                 Intent intent = new Intent(context, ChatScreen.class);
                 intent.putExtra("uid", user.getUid());
+                context.startActivity(intent);
+                dismiss();
+            }
+        });
+
+        vProfilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(context, ProfilePictureView.class);
+                intent.putExtra("userprofilepic", user.getProfilepic());
+                intent.putExtra("usename", user.getFirstname());
                 context.startActivity(intent);
                 dismiss();
             }

@@ -101,7 +101,6 @@ public class ChatListApdater extends RecyclerView.Adapter<ChatListViewHolder> im
     }
 
     public void getPosition(int pos) {
-        //ChatUtils.maketoast(context, userlist.get(pos).getFirstname());
         Intent intent = new Intent(context, ChatScreen.class);
         intent.putExtra("uid", userlist.get(pos).getUid());
         context.startActivity(intent);

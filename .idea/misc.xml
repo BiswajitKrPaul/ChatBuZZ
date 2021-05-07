@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/layout/profileimage_view.xml" value="0.246875" />
         <entry key="app/src/main/res/layout/profilepic_dialogview.xml" value="0.25" />
       </map>
     </option>

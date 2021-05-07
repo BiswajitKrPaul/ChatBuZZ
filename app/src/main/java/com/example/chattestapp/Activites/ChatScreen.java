@@ -157,6 +157,15 @@ public class ChatScreen extends AppCompatActivity {
             }
         });
 
+        materialToolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ProfilePictureView.class);
+                intent.putExtra("userprofilepic", currentUser.getProfilepic());
+                startActivity(intent);
+            }
+        });
+
 
     }
 
