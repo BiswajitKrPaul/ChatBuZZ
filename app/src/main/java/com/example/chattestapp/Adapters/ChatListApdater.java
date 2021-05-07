@@ -2,6 +2,8 @@ package com.example.chattestapp.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -14,6 +16,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.chattestapp.Activites.ChatScreen;
 import com.example.chattestapp.DataBaseClasses.Chat;
 import com.example.chattestapp.DataBaseClasses.User;
+import com.example.chattestapp.DialogView.ChatListDialogView;
 import com.example.chattestapp.Listeners.CustomOnClickListener;
 import com.example.chattestapp.R;
 import com.example.chattestapp.ViewHolder.ChatListViewHolder;
@@ -33,11 +36,12 @@ public class ChatListApdater extends RecyclerView.Adapter<ChatListViewHolder> im
     public static String PROFILE_PIC_STORAGE = "profilepics";
     public static String PROFILE_THUMB_STORAGE = "thumbprofilepics";
     static String MESSAGE_DB = "chat";
+    private final Context context;
+    private final ArrayList<User> userlist;
     DatabaseReference mDatabase;
     StorageReference mStorage;
     String lastText = "";
-    private Context context;
-    private ArrayList<User> userlist;
+    ChatListDialogView chatListDialogView;
 
 
     public ChatListApdater(Context context, ArrayList<User> userlist) {
@@ -101,5 +105,12 @@ public class ChatListApdater extends RecyclerView.Adapter<ChatListViewHolder> im
         Intent intent = new Intent(context, ChatScreen.class);
         intent.putExtra("uid", userlist.get(pos).getUid());
         context.startActivity(intent);
+    }
+
+    @Override
+    public void getItemPostion(int pos) {
+        chatListDialogView = new ChatListDialogView(context, userlist.get(pos));
+        chatListDialogView.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        chatListDialogView.show();
     }
 }

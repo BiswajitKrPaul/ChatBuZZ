@@ -58,7 +58,7 @@ public class MyFireBaseMessaging extends FirebaseMessagingService {
         int j = Integer.parseInt(senderuseruid.replaceAll("[\\D]", ""));
         Intent intent = new Intent(this, ChatScreen.class);
         intent.putExtra("uid", senderuseruid);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
@@ -83,7 +83,7 @@ public class MyFireBaseMessaging extends FirebaseMessagingService {
         int j = Integer.parseInt(senderuseruid.replaceAll("[\\D]", ""));
         Intent intent = new Intent(this, ChatScreen.class);
         intent.putExtra("uid", senderuseruid);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), Integer.parseInt(icon));

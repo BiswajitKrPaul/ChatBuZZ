@@ -28,6 +28,12 @@ public class ChatListViewHolder extends RecyclerView.ViewHolder {
                 clickListener.getPosition(getAdapterPosition());
             }
         });
+        profilePics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickListener.getItemPostion(getAdapterPosition());
+            }
+        });
     }
 
 }

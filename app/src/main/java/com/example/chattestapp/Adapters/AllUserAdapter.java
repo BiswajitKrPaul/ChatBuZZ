@@ -49,4 +49,9 @@ public class AllUserAdapter extends RecyclerView.Adapter<AllUserViewHolder> impl
     public void getPosition(int pos) {
         ChatUtils.maketoast(context, "Clicked On Button Pos : " + pos);
     }
+
+    @Override
+    public void getItemPostion(int pos) {
+        //Not required to implement for now.
+    }
 }
