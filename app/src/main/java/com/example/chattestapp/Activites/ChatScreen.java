@@ -165,6 +165,14 @@ public class ChatScreen extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        profilepic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ProfilePictureView.class);
+                intent.putExtra("userprofilepic", currentUser.getProfilepic());
+                startActivity(intent);
+            }
+        });
 
 
     }
