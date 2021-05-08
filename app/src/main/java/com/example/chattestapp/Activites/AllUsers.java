@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.chattestapp.Adapters.AllUserAdapter;
 import com.example.chattestapp.DataBaseClasses.User;
 import com.example.chattestapp.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,6 +29,7 @@ public class AllUsers extends AppCompatActivity {
     private LinearLayoutManager linearLayoutManager;
     private AllUserAdapter allUserAdapter;
     private DatabaseReference mDatabase;
+    private FirebaseUser firebaseUser;
     private User user;
 
     @Override
@@ -35,6 +38,7 @@ public class AllUsers extends AppCompatActivity {
         setContentView(R.layout.activity_all_users);
         recyclerView = findViewById(R.id.alluser_recylerview);
         linearLayoutManager = new LinearLayoutManager(AllUsers.this);
+        firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
         recyclerView.setHasFixedSize(true);
         userList = new ArrayList<>();
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -51,7 +55,9 @@ public class AllUsers extends AppCompatActivity {
         mDatabase.orderByChild("firstname").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                userList.add(dataSnapshot.getValue(User.class));
+                if(!firebaseUser.getUid().equals(dataSnapshot.getValue(User.class).getUid())) {
+                    userList.add(dataSnapshot.getValue(User.class));
+                }
                 allUserAdapter.notifyDataSetChanged();
             }
 
